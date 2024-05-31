@@ -46,10 +46,12 @@ import org.apache.streampipes.sdk.builder.StreamRequirementsBuilder;
 import org.apache.streampipes.sdk.helpers.EpRequirements;
 import org.apache.streampipes.sdk.helpers.Labels;
 import org.apache.streampipes.sdk.helpers.Locales;
+import org.apache.streampipes.sdk.helpers.Options;
 import org.apache.streampipes.vocabulary.XSD;
 import org.apache.streampipes.wrapper.params.compat.SinkParams;
 import org.apache.streampipes.wrapper.standalone.StreamPipesDataSink;
 
+import java.math.RoundingMode;
 import java.time.Duration;
 import java.util.*;
 
@@ -66,12 +68,26 @@ public class MilvusSink extends StreamPipesDataSink {
 
     public static final String VECTOR_KEY = "vector";
 
+    public static final String INDEX = "index";
+
+    public DataType dataType;
+
     public final Gson gson = new Gson();
 
     public MilvusClientV2Pool pool;
     public MilvusClientV2 client;
     String vector;
     DataType type;
+
+    private static final Map<String, DataType> INDEX_MAP = new HashMap<String, DataType>() {
+        {
+            put("BinaryVector", DataType.BinaryVector);
+            put("BFloat16Vector", DataType.BFloat16Vector);
+            put("Float16Vector", DataType.Float16Vector);
+            put("FloatVector", DataType.FloatVector);
+            put("SparseFloatVector", DataType.SparseFloatVector);
+        }
+    };
 
     //discussion里介绍一下milvus，贴一个milvus官网链接，pom修改依赖版本
     //数据库，向量配置和表配置移到这里来
@@ -89,10 +105,12 @@ public class MilvusSink extends StreamPipesDataSink {
                 .requiredTextParameter(Labels.withId(COLLECTION_NAME_KEY))
                 .requiredStream(StreamRequirementsBuilder
                         .create()
-                        .requiredPropertyWithUnaryMapping(EpRequirements.numberReq(),
+                        .requiredPropertyWithUnaryMapping(EpRequirements.listRequirement(),
                                 Labels.withId(VECTOR_KEY),
                                 PropertyScope.NONE)
                         .build())
+                .requiredSingleValueSelection(Labels.withId(INDEX),
+                        Options.from(INDEX_MAP.keySet().toArray(new String[0])))
                 .build();
     }
 
@@ -137,6 +155,7 @@ public class MilvusSink extends StreamPipesDataSink {
             // create a collection with schema, when indexParams is specified, it will create index as well
             CreateCollectionReq.CollectionSchema collectionSchema = client.createSchema();
             this.vector = parameters.extractor().mappingPropertyValue(VECTOR_KEY);
+            this.dataType = INDEX_MAP.get(parameters.extractor().selectedSingleValue(INDEX, String.class));
             extractEventProperties(schema.getEventProperties(), "", collectionSchema);
 
             CreateCollectionReq createCollectionReq = CreateCollectionReq.builder()
@@ -199,7 +218,11 @@ public class MilvusSink extends StreamPipesDataSink {
                 types.add(DataType.String);
                 values.add(value);
             } else if (value instanceof List) {
-                types.add(DataType.Array);
+                if(measurementValuePair.getKey().equals(vector)){
+                    types.add(dataType);
+                }else {
+                    types.add(DataType.Array);
+                }
                 values.add(value);
             } else if (value instanceof Byte){
                 types.add(DataType.Int8);
@@ -229,7 +252,6 @@ public class MilvusSink extends StreamPipesDataSink {
             if (property instanceof EventPropertyNested) {
                 extractEventProperties(((EventPropertyNested) property).getEventProperties(),
                         name + "_", collectionSchema);
-
             } else {
                 if (property instanceof EventPropertyPrimitive) {
                     final String uri = ((EventPropertyPrimitive) property).getRuntimeType();
@@ -251,7 +273,11 @@ public class MilvusSink extends StreamPipesDataSink {
                         collectionSchema.addField(AddFieldReq.builder().fieldName(name).dataType(DataType.String).build());
                     }
                 } else {
-                    collectionSchema.addField(AddFieldReq.builder().fieldName(name).dataType(DataType.Array).build());
+                    if(vector.equals(name)){
+                        collectionSchema.addField(AddFieldReq.builder().fieldName(name).dataType(dataType).build());
+                    }else {
+                        collectionSchema.addField(AddFieldReq.builder().fieldName(name).dataType(DataType.Array).build());
+                    }
                 }
             }
 

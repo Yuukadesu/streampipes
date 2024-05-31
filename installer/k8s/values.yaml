@@ -69,7 +69,7 @@ streampipes:
     host: ""
   # Ingressroute for running StreamPipes behind Traefik
   ingressroute:
-    active: true
+    active: false
     annotations: {}
     entryPoints:
       - web
