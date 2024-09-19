@@ -128,8 +128,7 @@ public class PipelineElementTemplateVisitor implements StaticPropertyVisitor {
   public void visit(OneOfStaticProperty oneOfStaticProperty) {
     if (hasKey(oneOfStaticProperty)) {
       String value = getAsString(oneOfStaticProperty);
-      oneOfStaticProperty.getOptions().forEach(option ->
-          option.setSelected(option.getName().equals(value)));
+      oneOfStaticProperty.getOptions().forEach(option -> option.setSelected(option.getName().equals(value)));
     }
   }
 
@@ -178,8 +177,8 @@ public class PipelineElementTemplateVisitor implements StaticPropertyVisitor {
     if (hasKey(staticPropertyGroup)) {
       Map<String, Object> values = getAsMap(staticPropertyGroup);
       staticPropertyGroup.getStaticProperties().forEach((group) -> {
-        PipelineElementTemplateVisitor visitor =
-            new PipelineElementTemplateVisitor(getAsMap(values, "staticProperties"));
+        PipelineElementTemplateVisitor visitor = new PipelineElementTemplateVisitor(
+                getAsMap(values, "staticProperties"));
         group.accept(visitor);
       });
     }

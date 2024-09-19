@@ -15,7 +15,6 @@
  * limitations under the License.
  *
  */
-
 package org.apache.streampipes.extensions.management.init;
 
 import org.apache.streampipes.dataformat.SpDataFormatFactory;
@@ -34,9 +33,6 @@ import org.apache.streampipes.model.grounding.TransportFormat;
 import org.apache.streampipes.model.grounding.TransportProtocol;
 import org.apache.streampipes.model.util.Cloner;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -45,6 +41,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class DeclarersSingleton implements IDeclarersSingleton {
 
@@ -74,7 +73,6 @@ public class DeclarersSingleton implements IDeclarersSingleton {
   private String route;
   private String hostName;
 
-
   private DeclarersSingleton() {
     this.dataProcessors = new HashMap<>();
     this.dataSinks = new HashMap<>();
@@ -93,7 +91,6 @@ public class DeclarersSingleton implements IDeclarersSingleton {
     }
     return DeclarersSingleton.instance;
   }
-
 
   public void populate(String host, Integer port, SpServiceDefinition serviceDef) {
     this.serviceDefinition = serviceDef;
@@ -134,14 +131,13 @@ public class DeclarersSingleton implements IDeclarersSingleton {
     result.putAll(dataProcessors);
     result.putAll(dataStreams);
     result.putAll(dataSinks);
-    //result.putAll(pipelineTemplateDeclarers);
+    // result.putAll(pipelineTemplateDeclarers);
     return result;
   }
 
   public void registerProtocol(SpProtocolDefinitionFactory<?> protocol) {
     SpProtocolManager.INSTANCE.register(protocol);
-    this.supportedProtocols.put(protocol.getTransportProtocolClass(),
-        protocol.getTransportProtocol());
+    this.supportedProtocols.put(protocol.getTransportProtocolClass(), protocol.getTransportProtocol());
   }
 
   public void registerProtocols(List<SpProtocolDefinitionFactory<?>> protocols) {
@@ -151,7 +147,7 @@ public class DeclarersSingleton implements IDeclarersSingleton {
   public void registerDataFormat(SpDataFormatFactory dataFormatDefinition) {
     SpDataFormatManager.INSTANCE.register(dataFormatDefinition);
     this.supportedFormats.put(dataFormatDefinition.getTransportFormatRdfUri(),
-        dataFormatDefinition.getTransportFormat());
+            dataFormatDefinition.getTransportFormat());
   }
 
   public void registerDataFormats(SpDataFormatFactory... dataFormatDefinitions) {
@@ -188,18 +184,11 @@ public class DeclarersSingleton implements IDeclarersSingleton {
   }
 
   public Collection<TransportProtocol> getSupportedProtocols() {
-    return this.supportedProtocols
-        .values()
-        .stream()
-        .map(p -> new Cloner().protocol(p))
-        .collect(Collectors.toList());
+    return this.supportedProtocols.values().stream().map(p -> new Cloner().protocol(p)).collect(Collectors.toList());
   }
 
   public Collection<TransportFormat> getSupportedFormats() {
-    return this.supportedFormats.values()
-        .stream()
-        .map(TransportFormat::new)
-        .collect(Collectors.toList());
+    return this.supportedFormats.values().stream().map(TransportFormat::new).collect(Collectors.toList());
   }
 
   public int getPort() {
@@ -248,10 +237,7 @@ public class DeclarersSingleton implements IDeclarersSingleton {
 
   public Optional<StreamPipesAdapter> getAdapter(String id) {
     return getAdapters().stream()
-        .filter(adapter -> adapter.declareConfig()
-            .getAdapterDescription()
-            .getAppId().equals(id))
-        .findFirst();
+            .filter(adapter -> adapter.declareConfig().getAdapterDescription().getAppId().equals(id)).findFirst();
   }
 
   private void checkAndStartExecutableStreams(IStreamPipesDataStream declarer) {

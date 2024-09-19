@@ -15,7 +15,6 @@
  * limitations under the License.
  *
  */
-
 package org.apache.streampipes.dataexplorer.influx.client;
 
 import org.apache.streampipes.commons.environment.Environment;
@@ -23,14 +22,14 @@ import org.apache.streampipes.commons.environment.Environments;
 import org.apache.streampipes.commons.exceptions.SpRuntimeException;
 import org.apache.streampipes.dataexplorer.influx.auth.InfluxAuthMode;
 
+import java.util.List;
+import java.util.concurrent.TimeUnit;
+
 import org.influxdb.InfluxDB;
 import org.influxdb.InfluxDBFactory;
 import org.influxdb.dto.Query;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.util.List;
-import java.util.concurrent.TimeUnit;
 
 public class InfluxClientProvider {
 
@@ -49,7 +48,8 @@ public class InfluxClientProvider {
   /**
    * Create a new InfluxDB client from provided settings
    *
-   * @param settings Connection settings
+   * @param settings
+   *          Connection settings
    * @return InfluxDB
    */
   public static InfluxDB getInfluxDBClient(InfluxConnectionSettings settings) {
@@ -59,15 +59,10 @@ public class InfluxClientProvider {
       return InfluxDBFactory.connect(settings.getConnectionUrl(), okHttpClientBuilder);
     } else {
       var okHttpClientBuilder = InfluxClientUtils.getHttpClientBuilder();
-      return InfluxDBFactory.connect(
-          settings.getConnectionUrl(),
-          settings.getUsername(),
-          settings.getPassword(),
-          okHttpClientBuilder
-      );
+      return InfluxDBFactory.connect(settings.getConnectionUrl(), settings.getUsername(), settings.getPassword(),
+              okHttpClientBuilder);
     }
   }
-
 
   public InfluxDB getInitializedInfluxDBClient(Environment environment) {
 
@@ -77,8 +72,7 @@ public class InfluxClientProvider {
 
     // Checking, if server is available
     var response = influxDb.ping();
-    if (response.getVersion()
-                .equalsIgnoreCase("unknown")) {
+    if (response.getVersion().equalsIgnoreCase("unknown")) {
       throw new SpRuntimeException("Could not connect to InfluxDb Server: " + settings.getConnectionUrl());
     }
 
@@ -100,16 +94,15 @@ public class InfluxClientProvider {
   /**
    * Creates a new database with the given name
    *
-   * @param influxDb The InfluxDB client
-   * @param dbName   The name of the database which should be created
+   * @param influxDb
+   *          The InfluxDB client
+   * @param dbName
+   *          The name of the database which should be created
    */
-  public void createDatabase(
-      InfluxDB influxDb,
-      String dbName
-  ) throws SpRuntimeException {
+  public void createDatabase(InfluxDB influxDb, String dbName) throws SpRuntimeException {
     if (!dbName.matches("^[a-zA-Z_]\\w*$")) {
       throw new SpRuntimeException(
-          "Database name '" + dbName + "' not allowed. Allowed names: ^[a-zA-Z_][a-zA-Z0-9_]*$");
+              "Database name '" + dbName + "' not allowed. Allowed names: ^[a-zA-Z_][a-zA-Z0-9_]*$");
     }
     influxDb.query(new Query("CREATE DATABASE \"" + dbName + "\"", ""));
   }
@@ -117,20 +110,15 @@ public class InfluxClientProvider {
   /**
    * Checks whether the given database exists.
    *
-   * @param influxDb The InfluxDB client instance
-   * @param dbName The name of the database, the method should look for
+   * @param influxDb
+   *          The InfluxDB client instance
+   * @param dbName
+   *          The name of the database, the method should look for
    * @return True if the database exists, false otherwise
    */
-  public boolean databaseExists(
-      InfluxDB influxDb,
-      String dbName
-  ) {
+  public boolean databaseExists(InfluxDB influxDb, String dbName) {
     var queryResult = influxDb.query(new Query("SHOW DATABASES", ""));
-    for (List<Object> a : queryResult.getResults()
-                                     .get(0)
-                                     .getSeries()
-                                     .get(0)
-                                     .getValues()) {
+    for (List<Object> a : queryResult.getResults().get(0).getSeries().get(0).getValues()) {
       if (!a.isEmpty() && dbName.equals(a.get(0))) {
         return true;
       }
@@ -138,10 +126,8 @@ public class InfluxClientProvider {
     return false;
   }
 
-
   private static Environment getEnvironment() {
     return Environments.getEnvironment();
   }
-
 
 }

@@ -44,14 +44,11 @@ public class ConnectionStorageHandler {
     List<Connection> connections = new ArrayList<>();
     pipeline.getActions().forEach(sink -> findConnections(sink, connections));
 
-    connections.forEach(connection -> StorageDispatcher.INSTANCE
-        .getNoSqlStore()
-        .getConnectionStorageApi()
-        .addConnection(connection));
+    connections.forEach(connection -> StorageDispatcher.INSTANCE.getNoSqlStore().getConnectionStorageApi()
+            .addConnection(connection));
   }
 
-  private void findConnections(NamedStreamPipesEntity target,
-                               List<Connection> connections) {
+  private void findConnections(NamedStreamPipesEntity target, List<Connection> connections) {
     if (target instanceof DataSinkInvocation || target instanceof DataProcessorInvocation) {
       InvocableStreamPipesEntity pipelineElement = (InvocableStreamPipesEntity) target;
       pipelineElement.getConnectedTo().forEach(conn -> {

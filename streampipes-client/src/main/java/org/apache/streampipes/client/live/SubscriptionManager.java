@@ -42,24 +42,20 @@ public class SubscriptionManager {
   private IBrokerConfigOverride brokerConfigOverride;
   private boolean overrideSettings = false;
 
-  public SubscriptionManager(EventGrounding grounding,
-                             EventProcessor callback) {
+  public SubscriptionManager(EventGrounding grounding, EventProcessor callback) {
     this.grounding = grounding;
     this.callback = callback;
   }
 
-  public SubscriptionManager(IBrokerConfigOverride brokerConfigOverride,
-                             EventGrounding grounding,
-                             EventProcessor callback) {
+  public SubscriptionManager(IBrokerConfigOverride brokerConfigOverride, EventGrounding grounding,
+          EventProcessor callback) {
     this(grounding, callback);
     this.brokerConfigOverride = brokerConfigOverride;
     this.overrideSettings = true;
   }
 
   public ISubscription subscribe() {
-    var formatDefinitionOpt = SpDataFormatManager
-        .INSTANCE
-        .findDefinition(this.grounding.getTransportFormats().get(0));
+    var formatDefinitionOpt = SpDataFormatManager.INSTANCE.findDefinition(this.grounding.getTransportFormats().get(0));
 
     try {
       SpProtocolDefinition<TransportProtocol> protocolDefinition = findProtocol(getTransportProtocol());
@@ -89,11 +85,10 @@ public class SubscriptionManager {
         return new Subscription(consumer);
       } else {
         throw new SpRuntimeException(
-            "No converter found for data format - did you add a format factory (client.registerDataFormat)?");
+                "No converter found for data format - did you add a format factory (client.registerDataFormat)?");
       }
     } catch (NoSuchElementException e) {
-      throw new SpRuntimeException(
-          "Could not find an implementation for messaging protocol "
+      throw new SpRuntimeException("Could not find an implementation for messaging protocol "
               + this.grounding.getTransportProtocol().getClass().getCanonicalName()
               + "- please add the corresponding module (streampipes-messaging-*) to your project dependencies.");
 

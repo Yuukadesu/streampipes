@@ -42,9 +42,7 @@ public class SendToBrokerAdapterSink implements IAdapterPipelineElement {
 
   public SendToBrokerAdapterSink(AdapterDescription adapterDescription) {
     this.adapterDescription = adapterDescription;
-    this.protocol = adapterDescription
-        .getEventGrounding()
-        .getTransportProtocol();
+    this.protocol = adapterDescription.getEventGrounding().getTransportProtocol();
 
     if (getEnvironment().getSpDebug().getValueOrDefault()) {
       modifyProtocolForDebugging(this.protocol);
@@ -54,13 +52,9 @@ public class SendToBrokerAdapterSink implements IAdapterPipelineElement {
     if (producerOpt.isPresent()) {
       this.producer = producerOpt.get().getProducer(this.protocol);
 
-      TransportFormat transportFormat = adapterDescription
-          .getEventGrounding()
-          .getTransportFormats()
-          .get(0);
+      TransportFormat transportFormat = adapterDescription.getEventGrounding().getTransportFormats().get(0);
 
-      this.dataFormatDefinition =
-          new TransportFormatSelector(transportFormat).getDataFormatDefinition();
+      this.dataFormatDefinition = new TransportFormatSelector(transportFormat).getDataFormatDefinition();
 
       producer.connect();
     } else {
@@ -73,9 +67,7 @@ public class SendToBrokerAdapterSink implements IAdapterPipelineElement {
     try {
       if (event != null) {
         sendToBroker(dataFormatDefinition.fromMap(event));
-        SpMonitoringManager.INSTANCE.increaseOutCounter(
-            adapterDescription.getElementId(),
-            System.currentTimeMillis());
+        SpMonitoringManager.INSTANCE.increaseOutCounter(adapterDescription.getElementId(), System.currentTimeMillis());
       }
     } catch (RuntimeException e) {
       new ExtensionsLogger(adapterDescription.getElementId()).error(e);
@@ -99,5 +91,3 @@ public class SendToBrokerAdapterSink implements IAdapterPipelineElement {
   }
 
 }
-
-

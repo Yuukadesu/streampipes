@@ -15,7 +15,6 @@
  * limitations under the License.
  *
  */
-
 package org.apache.streampipes.extensions.connectors.influx.sink;
 
 import org.apache.streampipes.commons.exceptions.SpRuntimeException;
@@ -24,13 +23,13 @@ import org.apache.streampipes.dataexplorer.influx.client.InfluxConnectionSetting
 import org.apache.streampipes.extensions.connectors.influx.shared.SharedInfluxClient;
 import org.apache.streampipes.model.runtime.Event;
 
+import java.util.Map;
+import java.util.concurrent.TimeUnit;
+
 import org.influxdb.BatchOptions;
 import org.influxdb.dto.Point;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.util.Map;
-import java.util.concurrent.TimeUnit;
 
 public class InfluxDbClient extends SharedInfluxClient {
 
@@ -42,12 +41,8 @@ public class InfluxDbClient extends SharedInfluxClient {
 
   private final InfluxClientProvider influxClientProvider;
 
-
-  InfluxDbClient(InfluxConnectionSettings connectionSettings,
-                 String measureName,
-                 String timestampField,
-                 Integer batchSize,
-                 Integer flushDuration) throws SpRuntimeException {
+  InfluxDbClient(InfluxConnectionSettings connectionSettings, String measureName, String timestampField,
+          Integer batchSize, Integer flushDuration) throws SpRuntimeException {
     super(connectionSettings, measureName);
     this.measureName = measureName;
     this.timestampField = timestampField;
@@ -61,8 +56,8 @@ public class InfluxDbClient extends SharedInfluxClient {
   /**
    * Connects to the InfluxDB Server, sets the database and initializes the batch-behaviour
    *
-   * @throws SpRuntimeException If not connection can be established or if the database could not
-   *                            be found
+   * @throws SpRuntimeException
+   *           If not connection can be established or if the database could not be found
    */
   private void connect() throws SpRuntimeException {
     super.initClient();
@@ -82,8 +77,10 @@ public class InfluxDbClient extends SharedInfluxClient {
   /**
    * Saves an event to the connnected InfluxDB database
    *
-   * @param event The event which should be saved
-   * @throws SpRuntimeException If the column name (key-value of the event map) is not allowed
+   * @param event
+   *          The event which should be saved
+   * @throws SpRuntimeException
+   *           If the column name (key-value of the event map) is not allowed
    */
   void save(Event event) throws SpRuntimeException {
     if (event == null) {

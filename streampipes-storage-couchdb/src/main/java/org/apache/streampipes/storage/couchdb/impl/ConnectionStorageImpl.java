@@ -15,7 +15,6 @@
  * limitations under the License.
  *
  */
-
 package org.apache.streampipes.storage.couchdb.impl;
 
 import org.apache.streampipes.model.client.connection.Connection;
@@ -24,21 +23,19 @@ import org.apache.streampipes.storage.api.IPipelineElementConnectionStorage;
 import org.apache.streampipes.storage.couchdb.dao.AbstractDao;
 import org.apache.streampipes.storage.couchdb.utils.Utils;
 
-import com.google.gson.JsonArray;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
-import org.apache.http.client.fluent.Request;
-
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
-public class ConnectionStorageImpl extends AbstractDao<Connection> implements
-    IPipelineElementConnectionStorage {
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
+import org.apache.http.client.fluent.Request;
 
+public class ConnectionStorageImpl extends AbstractDao<Connection> implements IPipelineElementConnectionStorage {
 
   public ConnectionStorageImpl() {
     super(Utils::getCouchDbConnectionClient, Connection.class);
@@ -52,7 +49,7 @@ public class ConnectionStorageImpl extends AbstractDao<Connection> implements
   @Override
   public List<PipelineElementRecommendation> getRecommendedElements(String from) {
     // doesn't work as required object array is not created by lightcouch
-    //List<JsonObject> obj = dbClient.view("connection/frequent").startKey(from).endKey(from, new Object())
+    // List<JsonObject> obj = dbClient.view("connection/frequent").startKey(from).endKey(from, new Object())
     // .group(true).query(JsonObject.class);
     String query;
     query = buildQuery(from);
@@ -67,30 +64,22 @@ public class ConnectionStorageImpl extends AbstractDao<Connection> implements
 
   private String buildQuery(String from) {
     String escapedPath = Utils
-        .escapePathSegment("startkey=[\"" + from + "\"]&endkey=[\"" + from + "\", {}]&group=true");
+            .escapePathSegment("startkey=[\"" + from + "\"]&endkey=[\"" + from + "\", {}]&group=true");
     return couchDbClientSupplier.get().getDBUri() + "_design/connection/_view/frequent?" + escapedPath;
   }
 
   private List<PipelineElementRecommendation> handleResponse(JsonObject jsonObject) {
     List<PipelineElementRecommendation> recommendations = new ArrayList<>();
     JsonArray jsonArray = jsonObject.get("rows").getAsJsonArray();
-    jsonArray.forEach(resultObj ->
-        recommendations.add(makeRecommendation(resultObj)));
+    jsonArray.forEach(resultObj -> recommendations.add(makeRecommendation(resultObj)));
     return recommendations;
   }
 
   private PipelineElementRecommendation makeRecommendation(JsonElement resultObj) {
     PipelineElementRecommendation recommendation = new PipelineElementRecommendation();
-    recommendation.setElementId(resultObj
-        .getAsJsonObject()
-        .get("key")
-        .getAsJsonArray()
-        .get(1).getAsString());
+    recommendation.setElementId(resultObj.getAsJsonObject().get("key").getAsJsonArray().get(1).getAsString());
 
-    recommendation.setCount(resultObj
-        .getAsJsonObject()
-        .get("value")
-        .getAsInt());
+    recommendation.setCount(resultObj.getAsJsonObject().get("value").getAsInt());
 
     return recommendation;
   }

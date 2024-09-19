@@ -15,7 +15,6 @@
  * limitations under the License.
  *
  */
-
 package org.apache.streampipes.dataformat.json;
 
 import org.apache.streampipes.dataformat.SpDataFormatDefinition;

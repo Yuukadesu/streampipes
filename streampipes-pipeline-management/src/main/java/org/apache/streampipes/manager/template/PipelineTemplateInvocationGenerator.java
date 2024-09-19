@@ -33,20 +33,20 @@ public class PipelineTemplateInvocationGenerator {
   private PipelineTemplateDescription pipelineTemplateDescription;
 
   public PipelineTemplateInvocationGenerator(SpDataStream dataStream,
-                                             PipelineTemplateDescription pipelineTemplateDescription) {
+          PipelineTemplateDescription pipelineTemplateDescription) {
     this.spDataStream = dataStream;
     this.pipelineTemplateDescription = pipelineTemplateDescription;
   }
 
   public PipelineTemplateInvocation generateInvocation() {
 
-    Pipeline pipeline =
-        new PipelineGenerator(spDataStream.getElementId(), pipelineTemplateDescription, "test").makePipeline();
+    Pipeline pipeline = new PipelineGenerator(spDataStream.getElementId(), pipelineTemplateDescription, "test")
+            .makePipeline();
 
     PipelineTemplateInvocation pipelineTemplateInvocation = new PipelineTemplateInvocation();
     pipelineTemplateInvocation.setStaticProperties(collectStaticProperties(pipeline));
     pipelineTemplateInvocation.setDataStreamId(spDataStream.getElementId());
-    //pipelineTemplateInvocation.setPipelineTemplateDescription(pipelineTemplateDescription);
+    // pipelineTemplateInvocation.setPipelineTemplateDescription(pipelineTemplateDescription);
     pipelineTemplateInvocation.setPipelineTemplateId(pipelineTemplateDescription.getPipelineTemplateId());
     return pipelineTemplateInvocation;
   }
@@ -67,11 +67,9 @@ public class PipelineTemplateInvocationGenerator {
   }
 
   private List<StaticProperty> filter(List<StaticProperty> staticProperties) {
-    return staticProperties
-        .stream()
-        // TODO fix (predefined is always true
-        //.filter(sp -> !(sp instanceof MappingProperty))
-        .filter(sp -> !(sp.isPredefined()))
-        .collect(Collectors.toList());
+    return staticProperties.stream()
+            // TODO fix (predefined is always true
+            // .filter(sp -> !(sp instanceof MappingProperty))
+            .filter(sp -> !(sp.isPredefined())).collect(Collectors.toList());
   }
 }

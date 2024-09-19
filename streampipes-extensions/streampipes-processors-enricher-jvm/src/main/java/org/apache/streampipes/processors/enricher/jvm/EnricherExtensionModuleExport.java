@@ -15,7 +15,6 @@
  * limitations under the License.
  *
  */
-
 package org.apache.streampipes.processors.enricher.jvm;
 
 import org.apache.streampipes.extensions.api.connect.StreamPipesAdapter;
@@ -39,13 +38,8 @@ public class EnricherExtensionModuleExport implements IExtensionModuleExport {
 
   @Override
   public List<IStreamPipesPipelineElement<?>> pipelineElements() {
-    return List.of(
-        new JSEvalProcessor(),
-        new MathOpProcessor(),
-        new StaticMathOpProcessor(),
-        new TrigonometryProcessor(),
-        new ValueChangeProcessor()
-    );
+    return List.of(new JSEvalProcessor(), new MathOpProcessor(), new StaticMathOpProcessor(),
+            new TrigonometryProcessor(), new ValueChangeProcessor());
   }
 
   @Override

@@ -15,7 +15,6 @@
  * limitations under the License.
  *
  */
-
 package org.apache.streampipes.manager.matching.v2;
 
 import org.apache.streampipes.manager.matching.v2.utils.MatchingUtils;
@@ -33,8 +32,7 @@ public class FormatMatch extends AbstractMatcher<TransportFormat, TransportForma
 
   @Override
   public boolean match(TransportFormat offer, TransportFormat requirement, List<MatchingResultMessage> errorLog) {
-    return MatchingUtils.nullCheck(offer, requirement)
-        || requirement.getRdfType().containsAll(offer.getRdfType());
+    return MatchingUtils.nullCheck(offer, requirement) || requirement.getRdfType().containsAll(offer.getRdfType());
 
   }
 }

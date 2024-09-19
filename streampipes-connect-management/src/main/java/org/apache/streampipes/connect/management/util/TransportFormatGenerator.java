@@ -29,8 +29,7 @@ public class TransportFormatGenerator {
 
   public static TransportFormat getTransportFormat() {
     var cfg = Utils.getCoreConfigStorage().get();
-    List<SpDataFormat> supportedFormats =
-        cfg.getMessagingSettings().getPrioritizedFormats();
+    List<SpDataFormat> supportedFormats = cfg.getMessagingSettings().getPrioritizedFormats();
 
     if (supportedFormats.size() > 0) {
       return new TransportFormat(supportedFormats.get(0).getMessageFormat());
@@ -40,9 +39,7 @@ public class TransportFormatGenerator {
   }
 
   public static List<TransportFormat> getAllFormats() {
-    return Arrays.asList(SupportedFormats.cborFormat(),
-        SupportedFormats.jsonFormat(),
-        SupportedFormats.fstFormat(),
-        SupportedFormats.smileFormat());
+    return Arrays.asList(SupportedFormats.cborFormat(), SupportedFormats.jsonFormat(), SupportedFormats.fstFormat(),
+            SupportedFormats.smileFormat());
   }
 }

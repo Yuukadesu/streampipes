@@ -15,7 +15,6 @@
  * limitations under the License.
  *
  */
-
 package org.apache.streampipes.commons.environment;
 
 import org.apache.streampipes.commons.environment.model.OAuthConfiguration;
@@ -36,7 +35,9 @@ public interface Environment {
   IntEnvironmentVariable getServicePort();
 
   StringEnvironmentVariable getSpCoreScheme();
+
   StringEnvironmentVariable getSpCoreHost();
+
   IntEnvironmentVariable getSpCorePort();
 
   // Time series storage env variables
@@ -75,7 +76,6 @@ public interface Environment {
 
   StringEnvironmentVariable getCouchDbPassword();
 
-
   // JWT & Authentication
 
   StringEnvironmentVariable getClientUser();
@@ -105,7 +105,6 @@ public interface Environment {
 
   StringEnvironmentVariable getPrioritizedProtocol();
 
-
   // Setup
   BooleanEnvironmentVariable getSetupInstallPipelineElements();
 
@@ -126,7 +125,7 @@ public interface Environment {
 
   IntEnvironmentVariable getFlinkJobmanagerPort();
 
-  //prometheus
+  // prometheus
   StringEnvironmentVariable getPrometheusEndpointInclude();
 
   BooleanEnvironmentVariable getSetupPrometheusEndpoint();
@@ -144,12 +143,15 @@ public interface Environment {
 
   // Broker defaults
   StringEnvironmentVariable getKafkaHost();
+
   IntEnvironmentVariable getKafkaPort();
 
   StringEnvironmentVariable getMqttHost();
+
   IntEnvironmentVariable getMqttPort();
 
   StringEnvironmentVariable getNatsHost();
+
   IntEnvironmentVariable getNatsPort();
 
   StringEnvironmentVariable getPulsarUrl();

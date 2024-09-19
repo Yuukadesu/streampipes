@@ -15,7 +15,6 @@
  * limitations under the License.
  *
  */
-
 package org.apache.streampipes.model.pipeline;
 
 import org.apache.streampipes.model.shared.annotation.TsModel;
@@ -61,10 +60,8 @@ public class PipelineElementRecommendationMessage {
     return recommendedElements;
   }
 
-  public void setRecommendedElements(
-      List<PipelineElementRecommendation> recommendedElements) {
+  public void setRecommendedElements(List<PipelineElementRecommendation> recommendedElements) {
     this.recommendedElements = recommendedElements;
   }
-
 
 }

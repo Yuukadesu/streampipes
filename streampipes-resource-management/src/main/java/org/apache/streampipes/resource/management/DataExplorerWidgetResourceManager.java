@@ -15,7 +15,6 @@
  * limitations under the License.
  *
  */
-
 package org.apache.streampipes.resource.management;
 
 import org.apache.streampipes.model.datalake.DataExplorerWidgetModel;

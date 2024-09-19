@@ -15,7 +15,6 @@
  * limitations under the License.
  *
  */
-
 package org.apache.streampipes.extensions.api.extractor;
 
 import org.apache.streampipes.commons.exceptions.connect.AdapterException;
@@ -24,6 +23,7 @@ import org.apache.streampipes.model.connect.adapter.AdapterDescription;
 
 public interface IAdapterParameterExtractor {
   IParser selectedParser() throws AdapterException;
+
   IStaticPropertyExtractor getStaticPropertyExtractor();
 
   AdapterDescription getAdapterDescription();

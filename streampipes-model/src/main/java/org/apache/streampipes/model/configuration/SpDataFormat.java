@@ -17,15 +17,12 @@
  */
 package org.apache.streampipes.model.configuration;
 
-
 import org.apache.streampipes.vocabulary.MessageFormat;
 
 public enum SpDataFormat {
 
-  CBOR("Cbor", MessageFormat.CBOR),
-  JSON("JSON", MessageFormat.JSON),
-  FST("Fast-Serializer", MessageFormat.FST),
-  SMILE("Smile", MessageFormat.SMILE);
+  CBOR("Cbor", MessageFormat.CBOR), JSON("JSON", MessageFormat.JSON), FST("Fast-Serializer",
+          MessageFormat.FST), SMILE("Smile", MessageFormat.SMILE);
 
   private String name;
   private String messageFormat;

@@ -31,9 +31,7 @@ public class ServiceAccount extends Principal {
     super(PrincipalType.SERVICE_ACCOUNT);
   }
 
-  public static ServiceAccount from(String serviceAccountName,
-                                    String clientSecret,
-                                    Set<Role> roles) {
+  public static ServiceAccount from(String serviceAccountName, String clientSecret, Set<Role> roles) {
     ServiceAccount account = new ServiceAccount();
     account.setUsername(serviceAccountName);
     account.setClientSecret(clientSecret);

@@ -15,8 +15,11 @@
  * limitations under the License.
  *
  */
-
 package org.apache.streampipes.connect.shared.preprocessing.convert;
+
+import static org.apache.streampipes.connect.shared.preprocessing.utils.ConversionUtils.findPrimitiveProperty;
+import static org.apache.streampipes.connect.shared.preprocessing.utils.ConversionUtils.findProperty;
+import static org.apache.streampipes.connect.shared.preprocessing.utils.ConversionUtils.findPropertyHierarchy;
 
 import org.apache.streampipes.connect.shared.preprocessing.utils.Utils;
 import org.apache.streampipes.model.connect.rules.ITransformationRuleVisitor;
@@ -42,11 +45,6 @@ import org.apache.streampipes.sdk.utils.Datatypes;
 import java.net.URI;
 import java.util.List;
 
-import static org.apache.streampipes.connect.shared.preprocessing.utils.ConversionUtils.findPrimitiveProperty;
-import static org.apache.streampipes.connect.shared.preprocessing.utils.ConversionUtils.findProperty;
-import static org.apache.streampipes.connect.shared.preprocessing.utils.ConversionUtils.findPropertyHierarchy;
-
-
 public class ToOriginalSchemaConverter implements ITransformationRuleVisitor, ProvidesConversionResult {
 
   private final List<EventProperty> properties;
@@ -63,7 +61,8 @@ public class ToOriginalSchemaConverter implements ITransformationRuleVisitor, Pr
   @Override
   public void visit(DeleteRuleDescription rule) {
     // this can't be fully restored since we don't know the characteristics of the deleted field
-    // for now, we'll just add a string property with the deleted field name and enrich this after implementing #1960
+    // for now, we'll just add a string property with the deleted field name and enrich this after implementing
+    // #1960
     var propertyHierarchy = findPropertyHierarchy(properties, rule.getRuntimeKey());
     propertyHierarchy.add(EpProperties.stringEp(Labels.empty(), rule.getRuntimeKey(), ""));
   }

@@ -15,7 +15,6 @@
  * limitations under the License.
  *
  */
-
 package org.apache.streampipes.manager.matching.v2.pipeline;
 
 import org.apache.streampipes.model.base.InvocableStreamPipesEntity;
@@ -33,10 +32,9 @@ public class PipelineValidator {
     this.steps = new PipelineValidationSteps().collect();
   }
 
-  public void apply(NamedStreamPipesEntity source,
-                    InvocableStreamPipesEntity target,
-                    Set<InvocableStreamPipesEntity> allTargets,
-                    List<PipelineElementValidationInfo> validationInfos) throws SpValidationException {
+  public void apply(NamedStreamPipesEntity source, InvocableStreamPipesEntity target,
+          Set<InvocableStreamPipesEntity> allTargets, List<PipelineElementValidationInfo> validationInfos)
+          throws SpValidationException {
     for (AbstractPipelineValidationStep step : steps) {
       step.apply(source, target, allTargets, validationInfos);
     }

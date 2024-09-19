@@ -15,7 +15,6 @@
  * limitations under the License.
  *
  */
-
 package org.apache.streampipes.manager.recommender;
 
 import org.apache.streampipes.commons.exceptions.NoSuitableSepasAvailableException;
@@ -37,13 +36,13 @@ import org.apache.streampipes.storage.api.INoSqlStorage;
 import org.apache.streampipes.storage.api.IPipelineElementDescriptionStorage;
 import org.apache.streampipes.storage.management.StorageDispatcher;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class ElementRecommender {
 
@@ -53,8 +52,7 @@ public class ElementRecommender {
   private final String baseRecDomId;
   private final PipelineElementRecommendationMessage recommendationMessage;
 
-  public ElementRecommender(Pipeline partialPipeline,
-                            String baseRecDomId) {
+  public ElementRecommender(Pipeline partialPipeline, String baseRecDomId) {
     this.pipeline = partialPipeline;
     this.baseRecDomId = baseRecDomId;
     this.recommendationMessage = new PipelineElementRecommendationMessage();
@@ -76,44 +74,35 @@ public class ElementRecommender {
     if (recommendationMessage.getPossibleElements().isEmpty()) {
       throw new NoSuitableSepasAvailableException();
     } else {
-      recommendationMessage
-          .setRecommendedElements(calculateWeights(
-              filterOldElements(getNoSqlStorage()
-                  .getConnectionStorageApi()
-                  .getRecommendedElements(rootNodeId))));
+      recommendationMessage.setRecommendedElements(calculateWeights(
+              filterOldElements(getNoSqlStorage().getConnectionStorageApi().getRecommendedElements(rootNodeId))));
       return recommendationMessage;
     }
   }
 
   private String getRootNodeId(AllElementsProvider elementsProvider) {
     NamedStreamPipesEntity pe = elementsProvider.findElement(this.baseRecDomId);
-    return pe instanceof InvocableStreamPipesEntity ? ((InvocableStreamPipesEntity) pe).getBelongsTo() :
-        pe.getElementId();
+    return pe instanceof InvocableStreamPipesEntity
+            ? ((InvocableStreamPipesEntity) pe).getBelongsTo()
+            : pe.getElementId();
   }
 
   private List<PipelineElementRecommendation> filterOldElements(
-      List<PipelineElementRecommendation> recommendedElements) {
-    return recommendedElements
-        .stream()
-        .filter(r -> getAll()
-            .stream()
-            .anyMatch(a -> a.getElementId().equals(r.getElementId())))
-        .collect(Collectors.toList());
+          List<PipelineElementRecommendation> recommendedElements) {
+    return recommendedElements.stream()
+            .filter(r -> getAll().stream().anyMatch(a -> a.getElementId().equals(r.getElementId())))
+            .collect(Collectors.toList());
   }
 
   private List<PipelineElementRecommendation> calculateWeights(
-      List<PipelineElementRecommendation> recommendedElements) {
-    int allConnectionsCount = recommendedElements
-        .stream()
-        .mapToInt(PipelineElementRecommendation::getCount)
-        .sum();
+          List<PipelineElementRecommendation> recommendedElements) {
+    int allConnectionsCount = recommendedElements.stream().mapToInt(PipelineElementRecommendation::getCount).sum();
 
-    recommendedElements
-        .forEach(r -> {
-          r.setWeight(getWeight(r.getCount(), allConnectionsCount));
-          r.setName(getName(r.getElementId()));
-          r.setDescription(getDescription(r.getElementId()));
-        });
+    recommendedElements.forEach(r -> {
+      r.setWeight(getWeight(r.getCount(), allConnectionsCount));
+      r.setName(getName(r.getElementId()));
+      r.setDescription(getDescription(r.getElementId()));
+    });
 
     return recommendedElements;
   }
@@ -128,11 +117,7 @@ public class ElementRecommender {
 
   private NamedStreamPipesEntity filter(String elementId) {
     List<ConsumableStreamPipesEntity> allElements = getAll();
-    return allElements
-        .stream()
-        .filter(a -> a.getElementId().equals(elementId))
-        .findFirst()
-        .get();
+    return allElements.stream().filter(a -> a.getElementId().equals(elementId)).findFirst().get();
   }
 
   private Float getWeight(Integer count, Integer allConnectionsCount) {
@@ -152,28 +137,21 @@ public class ElementRecommender {
 
   private void addPossibleElements(NamedStreamPipesEntity sepa) {
     recommendationMessage.addPossibleElement(
-        new PipelineElementRecommendation(sepa.getElementId(), sepa.getName(), sepa.getDescription()));
+            new PipelineElementRecommendation(sepa.getElementId(), sepa.getName(), sepa.getDescription()));
   }
 
   private List<ConsumableStreamPipesEntity> getAllDataProcessors() {
     List<String> userObjects = new SpResourceManager().manageDataProcessors().findAllIdsOnly();
-    return getTripleStore()
-        .getAllDataProcessors()
-        .stream()
-        .filter(e -> userObjects.stream().anyMatch(u -> u.equals(e.getAppId())))
-        .map(DataProcessorDescription::new)
-        .collect(Collectors.toList());
+    return getTripleStore().getAllDataProcessors().stream()
+            .filter(e -> userObjects.stream().anyMatch(u -> u.equals(e.getAppId()))).map(DataProcessorDescription::new)
+            .collect(Collectors.toList());
   }
-
 
   private List<ConsumableStreamPipesEntity> getAllDataSinks() {
     List<String> userObjects = new SpResourceManager().manageDataSinks().findAllIdsOnly();
-    return getTripleStore()
-        .getAllDataSinks()
-        .stream()
-        .filter(e -> userObjects.stream().anyMatch(u -> u.equals(e.getAppId())))
-        .map(DataSinkDescription::new)
-        .collect(Collectors.toList());
+    return getTripleStore().getAllDataSinks().stream()
+            .filter(e -> userObjects.stream().anyMatch(u -> u.equals(e.getAppId()))).map(DataSinkDescription::new)
+            .collect(Collectors.toList());
   }
 
   private List<ConsumableStreamPipesEntity> getAll() {
@@ -198,14 +176,11 @@ public class ElementRecommender {
     if (entity instanceof SpDataStream) {
       return Optional.of((SpDataStream) entity);
     } else {
-      Pipeline partialPipeline =
-          new PartialPipelineGenerator(this.baseRecDomId, elementsProvider).makePartialPipeline();
+      Pipeline partialPipeline = new PartialPipelineGenerator(this.baseRecDomId, elementsProvider)
+              .makePartialPipeline();
       PipelineModificationMessage modifications = new PipelineVerificationHandlerV2(partialPipeline).verifyPipeline();
-      return modifications.getPipelineModifications()
-          .stream()
-          .filter(m -> m.getDomId().equals(this.baseRecDomId))
-          .map(PipelineModification::getOutputStream)
-          .findFirst();
+      return modifications.getPipelineModifications().stream().filter(m -> m.getDomId().equals(this.baseRecDomId))
+              .map(PipelineModification::getOutputStream).findFirst();
     }
   }
 }

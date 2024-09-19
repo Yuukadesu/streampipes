@@ -15,7 +15,6 @@
  * limitations under the License.
  *
  */
-
 package org.apache.streampipes.rest.extensions;
 
 import org.apache.streampipes.commons.constants.GlobalStreamPipesConstants;
@@ -29,6 +28,13 @@ import org.apache.streampipes.model.grounding.EventGrounding;
 import org.apache.streampipes.model.grounding.TransportFormat;
 import org.apache.streampipes.model.grounding.TransportProtocol;
 
+import java.io.IOException;
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
+
 import com.google.common.base.Charsets;
 import com.google.common.io.Resources;
 import org.apache.http.HttpStatus;
@@ -39,16 +45,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 
-import java.io.IOException;
-import java.net.URL;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
-
-public abstract class AbstractPipelineElementResource<
-    T extends IStreamPipesPipelineElement<?>>
-    extends AbstractExtensionsResource {
+public abstract class AbstractPipelineElementResource<T extends IStreamPipesPipelineElement<?>>
+        extends
+          AbstractExtensionsResource {
 
   private static final String SLASH = "/";
 
@@ -111,7 +110,7 @@ public abstract class AbstractPipelineElementResource<
 
   protected NamedStreamPipesEntity rewrite(NamedStreamPipesEntity desc) {
 
-    //TODO remove this and find a better solution
+    // TODO remove this and find a better solution
     if (desc != null) {
       // TODO remove after full internationalization support has been implemented
       if (desc.isIncludesLocales()) {
@@ -123,15 +122,13 @@ public abstract class AbstractPipelineElementResource<
       }
 
       if (desc instanceof ConsumableStreamPipesEntity) {
-        Collection<TransportProtocol> supportedProtocols =
-            DeclarersSingleton.getInstance().getSupportedProtocols();
-        Collection<TransportFormat> supportedFormats =
-            DeclarersSingleton.getInstance().getSupportedFormats();
+        Collection<TransportProtocol> supportedProtocols = DeclarersSingleton.getInstance().getSupportedProtocols();
+        Collection<TransportFormat> supportedFormats = DeclarersSingleton.getInstance().getSupportedFormats();
 
         if (supportedProtocols.size() > 0 && supportedFormats.size() > 0) {
           // Overwrite existing grounding from default provided by declarers singleton
           ((ConsumableStreamPipesEntity) desc)
-              .setSupportedGrounding(makeGrounding(supportedProtocols, supportedFormats));
+                  .setSupportedGrounding(makeGrounding(supportedProtocols, supportedFormats));
         }
       }
     }
@@ -140,7 +137,7 @@ public abstract class AbstractPipelineElementResource<
   }
 
   private EventGrounding makeGrounding(Collection<TransportProtocol> supportedProtocols,
-                                       Collection<TransportFormat> supportedFormats) {
+          Collection<TransportFormat> supportedFormats) {
     EventGrounding grounding = new EventGrounding();
     grounding.setTransportProtocols(new ArrayList<>(supportedProtocols));
     grounding.setTransportFormats(new ArrayList<>(supportedFormats));

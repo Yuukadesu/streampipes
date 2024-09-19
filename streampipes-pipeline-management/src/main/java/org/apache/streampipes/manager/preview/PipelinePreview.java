@@ -30,14 +30,14 @@ import org.apache.streampipes.model.graph.DataProcessorInvocation;
 import org.apache.streampipes.model.pipeline.Pipeline;
 import org.apache.streampipes.model.preview.PipelinePreviewModel;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import java.util.stream.Collectors;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class PipelinePreview {
 
@@ -47,9 +47,7 @@ public class PipelinePreview {
     String previewId = generatePreviewId();
     pipeline.setActions(new ArrayList<>());
     List<NamedStreamPipesEntity> pipelineElements = new ArrayList<>(
-        new PipelineVerificationHandlerV2(pipeline)
-            .verifyAndBuildGraphs(true)
-    );
+            new PipelineVerificationHandlerV2(pipeline).verifyAndBuildGraphs(true));
 
     invokeGraphs(filter(pipelineElements));
     storeGraphs(previewId, pipelineElements);
@@ -67,29 +65,20 @@ public class PipelinePreview {
   }
 
   public Map<String, SpDataStream> getPipelineElementPreviewStreams(String previewId) throws IllegalArgumentException {
-    return ActivePipelinePreviews
-        .INSTANCE
-        .getInvocationGraphs(previewId)
-        .stream()
-        .filter(graph -> graph instanceof DataProcessorInvocation || graph instanceof SpDataStream)
-        .collect(Collectors.toMap(
-            NamedStreamPipesEntity::getElementId,
-            graph -> {
+    return ActivePipelinePreviews.INSTANCE.getInvocationGraphs(previewId).stream()
+            .filter(graph -> graph instanceof DataProcessorInvocation || graph instanceof SpDataStream)
+            .collect(Collectors.toMap(NamedStreamPipesEntity::getElementId, graph -> {
               if (graph instanceof DataProcessorInvocation) {
                 return ((DataProcessorInvocation) graph).getOutputStream();
               } else {
                 return (SpDataStream) graph;
               }
-            }
-        ));
+            }));
   }
 
   private String findSelectedEndpoint(InvocableStreamPipesEntity g) throws NoServiceEndpointsAvailableException {
-    return new ExtensionsServiceEndpointGenerator()
-        .getEndpointResourceUrl(
-            g.getAppId(),
-            ExtensionsServiceEndpointUtils.getPipelineElementType(g)
-        );
+    return new ExtensionsServiceEndpointGenerator().getEndpointResourceUrl(g.getAppId(),
+            ExtensionsServiceEndpointUtils.getPipelineElementType(g));
   }
 
   private void invokeGraphs(List<InvocableStreamPipesEntity> graphs) {
@@ -114,8 +103,7 @@ public class PipelinePreview {
     ActivePipelinePreviews.INSTANCE.removePreview(previewId);
   }
 
-  private void storeGraphs(String previewId,
-                           List<NamedStreamPipesEntity> graphs) {
+  private void storeGraphs(String previewId, List<NamedStreamPipesEntity> graphs) {
     ActivePipelinePreviews.INSTANCE.addActivePreview(previewId, graphs);
   }
 
@@ -123,8 +111,7 @@ public class PipelinePreview {
     return UUID.randomUUID().toString();
   }
 
-  private PipelinePreviewModel makePreviewModel(String previewId,
-                                                List<NamedStreamPipesEntity> graphs) {
+  private PipelinePreviewModel makePreviewModel(String previewId, List<NamedStreamPipesEntity> graphs) {
     PipelinePreviewModel previewModel = new PipelinePreviewModel();
     previewModel.setPreviewId(previewId);
     previewModel.setSupportedPipelineElementDomIds(collectElementIds(graphs));
@@ -133,17 +120,13 @@ public class PipelinePreview {
   }
 
   private List<String> collectElementIds(List<NamedStreamPipesEntity> graphs) {
-    return graphs
-        .stream()
-        .map(NamedStreamPipesEntity::getElementId)
-        .collect(Collectors.toList());
+    return graphs.stream().map(NamedStreamPipesEntity::getElementId).collect(Collectors.toList());
   }
 
   private List<InvocableStreamPipesEntity> filter(List<NamedStreamPipesEntity> graphs) {
     List<InvocableStreamPipesEntity> dataProcessors = new ArrayList<>();
-    graphs.stream()
-        .filter(g -> g instanceof DataProcessorInvocation)
-        .forEach(p -> dataProcessors.add((DataProcessorInvocation) p));
+    graphs.stream().filter(g -> g instanceof DataProcessorInvocation)
+            .forEach(p -> dataProcessors.add((DataProcessorInvocation) p));
 
     return dataProcessors;
   }

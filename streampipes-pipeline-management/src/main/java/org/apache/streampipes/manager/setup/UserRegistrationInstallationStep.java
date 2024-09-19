@@ -15,7 +15,6 @@
  * limitations under the License.
  *
  */
-
 package org.apache.streampipes.manager.setup;
 
 import org.apache.streampipes.model.client.user.Principal;
@@ -40,11 +39,8 @@ public class UserRegistrationInstallationStep extends InstallationStep {
   private final String initialAdminUserSid;
   private final Set<Role> roles;
 
-  public UserRegistrationInstallationStep(String adminEmail,
-                                          String adminPassword,
-                                          String initialServiceAccountName,
-                                          String initialServiceAccountSecret,
-                                          String initialAdminUserSid) {
+  public UserRegistrationInstallationStep(String adminEmail, String adminPassword, String initialServiceAccountName,
+          String initialServiceAccountSecret, String initialAdminUserSid) {
     this.adminEmail = adminEmail;
     this.adminPassword = adminPassword;
     this.initialServiceAccountName = initialServiceAccountName;

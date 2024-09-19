@@ -29,6 +29,10 @@ import org.apache.streampipes.model.template.PipelineTemplateInvocation;
 import org.apache.streampipes.rest.core.base.impl.AbstractAuthGuardedRestResource;
 import org.apache.streampipes.rest.shared.exception.SpMessageException;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -39,10 +43,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-
 @RestController
 @RequestMapping("/api/v2/pipeline-templates")
 public class PipelineTemplate extends AbstractAuthGuardedRestResource {
@@ -52,57 +52,42 @@ public class PipelineTemplate extends AbstractAuthGuardedRestResource {
     List<SpDataStream> sources = getPipelineElementRdfStorage().getAllDataStreams();
     List<SpDataStream> datasets = new ArrayList<>();
 
-    sources.stream()
-        .map(SpDataStream::new)
-        .forEach(datasets::add);
+    sources.stream().map(SpDataStream::new).forEach(datasets::add);
 
     return ok((new SpDataStreamContainer(datasets)));
   }
 
-  @GetMapping(
-      path = "/invocation",
-      produces = MediaType.APPLICATION_JSON_VALUE)
+  @GetMapping(path = "/invocation", produces = MediaType.APPLICATION_JSON_VALUE)
   public ResponseEntity<PipelineTemplateInvocation> getPipelineTemplateInvocation(
-      @RequestParam(value = "streamId", required = false) String streamId,
-      @RequestParam(value = "templateId") String pipelineTemplateId) {
+          @RequestParam(value = "streamId", required = false) String streamId,
+          @RequestParam(value = "templateId") String pipelineTemplateId) {
     SpDataStream dataStream = getDataStream(streamId);
     var pipelineTemplateDescriptionOpt = getPipelineTemplateDescription(pipelineTemplateId);
     if (pipelineTemplateDescriptionOpt.isPresent()) {
-      PipelineTemplateInvocation invocation =
-          new PipelineTemplateInvocationGenerator(
-              dataStream,
-              pipelineTemplateDescriptionOpt.get()
-          ).generateInvocation();
+      PipelineTemplateInvocation invocation = new PipelineTemplateInvocationGenerator(dataStream,
+              pipelineTemplateDescriptionOpt.get()).generateInvocation();
       PipelineTemplateInvocation clonedInvocation = new PipelineTemplateInvocation(invocation);
       return ok(new PipelineTemplateInvocation(clonedInvocation));
     } else {
-      throw new SpMessageException(HttpStatus.BAD_REQUEST, Notifications.error(
-          String.format(
-              "Could not create pipeline template %s - did you install all pipeline elements?",
-              pipelineTemplateId.substring(pipelineTemplateId.lastIndexOf(".") + 1))
-      ));
+      throw new SpMessageException(HttpStatus.BAD_REQUEST,
+              Notifications.error(
+                      String.format("Could not create pipeline template %s - did you install all pipeline elements?",
+                              pipelineTemplateId.substring(pipelineTemplateId.lastIndexOf(".") + 1))));
     }
   }
 
-  @PostMapping(
-      consumes = MediaType.APPLICATION_JSON_VALUE,
-      produces = MediaType.APPLICATION_JSON_VALUE)
+  @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
   public ResponseEntity<PipelineOperationStatus> generatePipeline(
-      @RequestBody PipelineTemplateInvocation pipelineTemplateInvocation) {
+          @RequestBody PipelineTemplateInvocation pipelineTemplateInvocation) {
 
-    PipelineOperationStatus status = new PipelineTemplateInvocationHandler(
-        getAuthenticatedUserSid(),
-        pipelineTemplateInvocation
-    ).handlePipelineInvocation();
+    PipelineOperationStatus status = new PipelineTemplateInvocationHandler(getAuthenticatedUserSid(),
+            pipelineTemplateInvocation).handlePipelineInvocation();
     return ok(status);
   }
 
   private Optional<PipelineTemplateDescription> getPipelineTemplateDescription(String pipelineTemplateId) {
-    return new PipelineTemplateGenerator()
-        .getAllPipelineTemplates()
-        .stream()
-        .filter(pt -> pt.getAppId().equals(pipelineTemplateId))
-        .findFirst();
+    return new PipelineTemplateGenerator().getAllPipelineTemplates().stream()
+            .filter(pt -> pt.getAppId().equals(pipelineTemplateId)).findFirst();
   }
 
   private List<SpDataStream> getAllDataStreams() {
@@ -110,10 +95,6 @@ public class PipelineTemplate extends AbstractAuthGuardedRestResource {
   }
 
   private SpDataStream getDataStream(String streamId) {
-    return getAllDataStreams()
-        .stream()
-        .filter(sp -> sp.getElementId().equals(streamId))
-        .findFirst()
-        .get();
+    return getAllDataStreams().stream().filter(sp -> sp.getElementId().equals(streamId)).findFirst().get();
   }
 }

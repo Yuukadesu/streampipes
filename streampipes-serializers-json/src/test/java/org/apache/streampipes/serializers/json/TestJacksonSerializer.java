@@ -29,10 +29,8 @@ public class TestJacksonSerializer {
   public static void assertions(PipelineElementTemplate template) {
     Assertions.assertEquals("name", template.getTemplateName());
     Assertions.assertEquals("description", template.getTemplateDescription());
-    Assertions.assertEquals(2,
-                            template.getTemplateConfigs().size());
-    Assertions.assertEquals("test-string",
-                            template.getTemplateConfigs().get("test-key").getValue());
+    Assertions.assertEquals(2, template.getTemplateConfigs().size());
+    Assertions.assertEquals("test-string", template.getTemplateConfigs().get("test-key").getValue());
     Assertions.assertTrue(template.getTemplateConfigs().get("test-key").isEditable());
     Assertions.assertTrue(template.getTemplateConfigs().get("test-key").isDisplayed());
     Assertions.assertTrue(template.getTemplateConfigs().get("test-key-2").isEditable());
@@ -45,11 +43,10 @@ public class TestJacksonSerializer {
 
     try {
       String json = JacksonSerializer.getObjectMapper().writeValueAsString(template);
-      PipelineElementTemplate template2 =
-          JacksonSerializer.getObjectMapper().readValue(json, PipelineElementTemplate.class);
+      PipelineElementTemplate template2 = JacksonSerializer.getObjectMapper().readValue(json,
+              PipelineElementTemplate.class);
       assertions(template2);
-      Assertions.assertEquals(2,
-                              template2.getTemplateConfigs().get("test-key-2").getValue());
+      Assertions.assertEquals(2, template2.getTemplateConfigs().get("test-key-2").getValue());
     } catch (JsonProcessingException e) {
       e.printStackTrace();
     }

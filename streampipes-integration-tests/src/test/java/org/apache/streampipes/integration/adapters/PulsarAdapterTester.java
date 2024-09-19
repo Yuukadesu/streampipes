@@ -29,16 +29,16 @@ import org.apache.streampipes.model.staticproperty.StaticPropertyAlternatives;
 import org.apache.streampipes.model.template.PipelineElementTemplate;
 import org.apache.streampipes.model.template.PipelineElementTemplateConfig;
 
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.pulsar.client.api.Producer;
 import org.apache.pulsar.client.api.PulsarClient;
 import org.apache.pulsar.client.api.PulsarClientException;
-
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
 
 public class PulsarAdapterTester extends AdapterTesterBase {
   PulsarContainer pulsarContainer;
@@ -60,28 +60,18 @@ public class PulsarAdapterTester extends AdapterTesterBase {
 
     Map<String, PipelineElementTemplateConfig> configs = new HashMap<>();
     configs.put(PulsarProtocol.PULSAR_BROKER_HOST,
-        new PipelineElementTemplateConfig(true, true, pulsarContainer.getBrokerHost()));
+            new PipelineElementTemplateConfig(true, true, pulsarContainer.getBrokerHost()));
     configs.put(PulsarProtocol.PULSAR_BROKER_PORT,
-        new PipelineElementTemplateConfig(true, false, pulsarContainer.getBrokerPort()));
-    configs.put(PulsarProtocol.PULSAR_TOPIC,
-        new PipelineElementTemplateConfig(true, false, TOPIC));
-    configs.put(PulsarProtocol.PULSAR_SUBSCRIPTION_NAME,
-        new PipelineElementTemplateConfig(true, false, "test-sub"));
+            new PipelineElementTemplateConfig(true, false, pulsarContainer.getBrokerPort()));
+    configs.put(PulsarProtocol.PULSAR_TOPIC, new PipelineElementTemplateConfig(true, false, TOPIC));
+    configs.put(PulsarProtocol.PULSAR_SUBSCRIPTION_NAME, new PipelineElementTemplateConfig(true, false, "test-sub"));
 
     var template = new PipelineElementTemplate("name", "description", configs);
 
-    var desc =
-        new AdapterTemplateHandler(template,
-            configuration.getAdapterDescription(),
-            true)
+    var desc = new AdapterTemplateHandler(template, configuration.getAdapterDescription(), true)
             .applyTemplateOnPipelineElement();
 
-    ((StaticPropertyAlternatives) (desc)
-        .getConfig()
-        .get(4))
-        .getAlternatives()
-        .get(0)
-        .setSelected(true);
+    ((StaticPropertyAlternatives) (desc).getConfig().get(4)).getAlternatives().get(0).setSelected(true);
 
     return configuration;
   }
@@ -98,11 +88,10 @@ public class PulsarAdapterTester extends AdapterTesterBase {
 
   @Override
   public void publishEvents(List<Map<String, Object>> events) {
-    try (PulsarClient client = PulsarClient.builder().serviceUrl(
-            String.format("pulsar://%s:%s", pulsarContainer.getBrokerHost(),
-                pulsarContainer.getBrokerPort()))
-        .build();
-         Producer<byte[]> producer = client.newProducer().topic(TOPIC).create()) {
+    try (PulsarClient client = PulsarClient.builder()
+            .serviceUrl(
+                    String.format("pulsar://%s:%s", pulsarContainer.getBrokerHost(), pulsarContainer.getBrokerPort()))
+            .build(); Producer<byte[]> producer = client.newProducer().topic(TOPIC).create()) {
       var objectMapper = new ObjectMapper();
 
       events.forEach(event -> {

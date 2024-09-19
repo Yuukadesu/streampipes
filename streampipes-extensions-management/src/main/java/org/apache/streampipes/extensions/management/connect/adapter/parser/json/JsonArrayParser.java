@@ -15,7 +15,6 @@
  * limitations under the License.
  *
  */
-
 package org.apache.streampipes.extensions.management.connect.adapter.parser.json;
 
 import org.apache.streampipes.commons.exceptions.connect.ParseException;
@@ -29,6 +28,7 @@ import java.util.Map;
 public class JsonArrayParser extends JsonParser {
 
   InputStream inputStream;
+
   public void init(InputStream inputStream) {
     this.inputStream = inputStream;
   }

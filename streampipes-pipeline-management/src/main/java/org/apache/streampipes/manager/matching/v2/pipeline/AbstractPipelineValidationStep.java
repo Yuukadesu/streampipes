@@ -15,7 +15,6 @@
  * limitations under the License.
  *
  */
-
 package org.apache.streampipes.manager.matching.v2.pipeline;
 
 import org.apache.streampipes.model.base.InvocableStreamPipesEntity;
@@ -29,15 +28,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-
 public abstract class AbstractPipelineValidationStep {
 
   protected final Map<String, Integer> visitorHistory = new HashMap<>();
 
-  public abstract void apply(NamedStreamPipesEntity source,
-                             InvocableStreamPipesEntity target,
-                             Set<InvocableStreamPipesEntity> allTargets,
-                             List<PipelineElementValidationInfo> validationInfos) throws SpValidationException;
+  public abstract void apply(NamedStreamPipesEntity source, InvocableStreamPipesEntity target,
+          Set<InvocableStreamPipesEntity> allTargets, List<PipelineElementValidationInfo> validationInfos)
+          throws SpValidationException;
 
   public List<MatchingResultMessage> getNewErrorLog() {
     return new ArrayList<>();

@@ -15,14 +15,10 @@
  * limitations under the License.
  *
  */
-
 package org.apache.streampipes.model.schema;
 
 import org.apache.streampipes.model.util.ElementIdGenerator;
 import org.apache.streampipes.model.util.ListUtils;
-
-import com.fasterxml.jackson.annotation.JsonSubTypes;
-import com.fasterxml.jackson.annotation.JsonTypeInfo;
 
 import java.net.URI;
 import java.util.ArrayList;
@@ -31,11 +27,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
-@JsonSubTypes({
-    @JsonSubTypes.Type(EventPropertyList.class),
-    @JsonSubTypes.Type(EventPropertyNested.class),
-    @JsonSubTypes.Type(EventPropertyPrimitive.class)
-})
+import com.fasterxml.jackson.annotation.JsonSubTypes;
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
+
+@JsonSubTypes({@JsonSubTypes.Type(EventPropertyList.class), @JsonSubTypes.Type(EventPropertyNested.class),
+    @JsonSubTypes.Type(EventPropertyPrimitive.class)})
 @JsonTypeInfo(use = JsonTypeInfo.Id.CLASS, property = "@class")
 public abstract class EventProperty {
 
@@ -60,7 +56,6 @@ public abstract class EventProperty {
   private String runtimeId;
 
   private Map<String, Object> additionalMetadata;
-
 
   public EventProperty() {
     this.elementId = ElementIdGenerator.makeElementId(EventProperty.class);
@@ -100,7 +95,6 @@ public abstract class EventProperty {
   public static String getPrefix() {
     return PREFIX;
   }
-
 
   public String getRuntimeName() {
     return runtimeName;
@@ -185,7 +179,7 @@ public abstract class EventProperty {
   @Override
   public int hashCode() {
     return Objects.hash(elementId, label, description, runtimeName, required, domainProperties, propertyScope, index,
-        runtimeId);
+            runtimeId);
   }
 
   @Override
@@ -198,28 +192,17 @@ public abstract class EventProperty {
     }
     EventProperty that = (EventProperty) o;
 
-    return required == that.required
-           && index == that.index
-           && Objects.equals(label, that.label)
-           && Objects.equals(description, that.description)
-           && Objects.equals(runtimeName, that.runtimeName)
-           && Objects.equals(propertyScope, that.propertyScope)
-           && Objects.equals(runtimeId, that.runtimeId)
-           && ListUtils.isEqualList(this.domainProperties, that.domainProperties);
+    return required == that.required && index == that.index && Objects.equals(label, that.label)
+            && Objects.equals(description, that.description) && Objects.equals(runtimeName, that.runtimeName)
+            && Objects.equals(propertyScope, that.propertyScope) && Objects.equals(runtimeId, that.runtimeId)
+            && ListUtils.isEqualList(this.domainProperties, that.domainProperties);
   }
 
   @Override
   public String toString() {
-    return "EventProperty{"
-           + "elementId='" + elementId + '\''
-           + ", label='" + label + '\''
-           + ", description='" + description + '\''
-           + ", runtimeName='" + runtimeName + '\''
-           + ", required=" + required
-           + ", domainProperties=" + domainProperties
-           + ", propertyScope='" + propertyScope + '\''
-           + ", index=" + index
-           + ", runtimeId='" + runtimeId + '\''
-           + '}';
+    return "EventProperty{" + "elementId='" + elementId + '\'' + ", label='" + label + '\'' + ", description='"
+            + description + '\'' + ", runtimeName='" + runtimeName + '\'' + ", required=" + required
+            + ", domainProperties=" + domainProperties + ", propertyScope='" + propertyScope + '\'' + ", index=" + index
+            + ", runtimeId='" + runtimeId + '\'' + '}';
   }
 }

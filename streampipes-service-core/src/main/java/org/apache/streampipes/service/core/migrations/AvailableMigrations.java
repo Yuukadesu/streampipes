@@ -15,8 +15,6 @@
  * limitations under the License.
  *
  */
-
-
 package org.apache.streampipes.service.core.migrations;
 
 import org.apache.streampipes.service.core.migrations.v070.CreateAssetLinkTypeMigration;
@@ -35,16 +33,9 @@ import java.util.List;
 public class AvailableMigrations {
 
   public List<Migration> getAvailableMigrations() {
-    return Arrays.asList(
-        new CreateAssetLinkTypeMigration(),
-        new CreateDefaultAssetMigration(),
-        new CreateFileAssetTypeMigration(),
-        new UpdateUsernameViewMigration(),
-        new AdapterMigration(),
-        new StoreEmailTemplatesMigration(),
-        new MergeFilenamesAndRenameDuplicatesMigration(),
-        new AddLinkSettingsMigration(),
-        new DataExplorerDataViewMigration()
-    );
+    return Arrays.asList(new CreateAssetLinkTypeMigration(), new CreateDefaultAssetMigration(),
+            new CreateFileAssetTypeMigration(), new UpdateUsernameViewMigration(), new AdapterMigration(),
+            new StoreEmailTemplatesMigration(), new MergeFilenamesAndRenameDuplicatesMigration(),
+            new AddLinkSettingsMigration(), new DataExplorerDataViewMigration());
   }
 }

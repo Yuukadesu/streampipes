@@ -15,7 +15,6 @@
  * limitations under the License.
  *
  */
-
 package org.apache.streampipes.dataformat;
 
 import org.apache.streampipes.model.grounding.TransportFormat;
@@ -44,16 +43,10 @@ public enum SpDataFormatManager {
 
   public Optional<SpDataFormatDefinition> findDefinition(TransportFormat transportFormat) {
     // TODO why is transportFormat.getRdfType a list?
-    return this.availableDataFormats
-        .stream()
-        .filter
-            (adf -> transportFormat
-                .getRdfType()
-                .stream()
-                .anyMatch(tf -> tf.toString().equals(adf
-                    .getTransportFormatRdfUri())))
-        .map(SpDataFormatFactory::createInstance)
-        .findFirst();
+    return this.availableDataFormats.stream()
+            .filter(adf -> transportFormat.getRdfType().stream()
+                    .anyMatch(tf -> tf.toString().equals(adf.getTransportFormatRdfUri())))
+            .map(SpDataFormatFactory::createInstance).findFirst();
 
   }
 

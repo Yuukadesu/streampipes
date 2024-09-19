@@ -59,29 +59,29 @@ public class BoundPipelineElementBuilder {
 
   public BoundPipelineElementBuilder withPredefinedFreeTextValue(String internalStaticPropertyId, String value) {
     this.streamPipesEntity.getStaticProperties().stream().filter(sp -> sp instanceof FreeTextStaticProperty)
-        .forEach(sp -> {
-          if (sp.getInternalName().equals(internalStaticPropertyId)) {
-            sp.setPredefined(true);
-            ((FreeTextStaticProperty) sp).setValue(value);
-          }
-        });
+            .forEach(sp -> {
+              if (sp.getInternalName().equals(internalStaticPropertyId)) {
+                sp.setPredefined(true);
+                ((FreeTextStaticProperty) sp).setValue(value);
+              }
+            });
 
     return this;
   }
 
   public BoundPipelineElementBuilder withPredefinedSelection(String internalStaticPropertyId,
-                                                             List<String> selectedOptions) {
+          List<String> selectedOptions) {
     this.streamPipesEntity.getStaticProperties().stream().filter(sp -> sp instanceof SelectionStaticProperty)
-        .forEach(sp -> {
-          if (sp.getInternalName().equals(internalStaticPropertyId)) {
-            sp.setPredefined(true);
-            ((SelectionStaticProperty) sp).getOptions().forEach(o -> {
-              if (selectedOptions.stream().anyMatch(so -> so.equals(o.getName()))) {
-                o.setSelected(true);
+            .forEach(sp -> {
+              if (sp.getInternalName().equals(internalStaticPropertyId)) {
+                sp.setPredefined(true);
+                ((SelectionStaticProperty) sp).getOptions().forEach(o -> {
+                  if (selectedOptions.stream().anyMatch(so -> so.equals(o.getName()))) {
+                    o.setSelected(true);
+                  }
+                });
               }
             });
-          }
-        });
     return this;
   }
 

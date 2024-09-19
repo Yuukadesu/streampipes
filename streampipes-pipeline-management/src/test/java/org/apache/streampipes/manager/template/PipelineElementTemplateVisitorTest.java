@@ -15,23 +15,22 @@
  * limitations under the License.
  *
  */
-
 package org.apache.streampipes.manager.template;
-
-import org.apache.streampipes.model.staticproperty.MappingPropertyNary;
-
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+
+import org.apache.streampipes.model.staticproperty.MappingPropertyNary;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 class PipelineElementTemplateVisitorTest {
   private static final String PROPERTY_NAME = "propertyName";

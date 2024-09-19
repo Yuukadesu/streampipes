@@ -15,7 +15,6 @@
  * limitations under the License.
  *
  */
-
 package org.apache.streampipes.manager.matching;
 
 import org.apache.streampipes.model.SpDataStream;
@@ -40,23 +39,13 @@ public class FormatSelector extends GroundingSelector {
   public TransportFormat getTransportFormat() {
 
     if (source instanceof SpDataStream) {
-      return ((SpDataStream) source)
-          .getEventGrounding()
-          .getTransportFormats()
-          .get(0);
+      return ((SpDataStream) source).getEventGrounding().getTransportFormats().get(0);
     } else {
-      List<SpDataFormat> prioritizedFormats =
-          StorageDispatcher
-              .INSTANCE
-              .getNoSqlStore()
-              .getSpCoreConfigurationStorage()
-              .get()
-              .getMessagingSettings()
-              .getPrioritizedFormats();
+      List<SpDataFormat> prioritizedFormats = StorageDispatcher.INSTANCE.getNoSqlStore().getSpCoreConfigurationStorage()
+              .get().getMessagingSettings().getPrioritizedFormats();
 
-      List<SpDataFormat> supportedFormats = prioritizedFormats
-          .stream()
-          .filter(pf -> supportsFormat(pf.getMessageFormat())).toList();
+      List<SpDataFormat> supportedFormats = prioritizedFormats.stream()
+              .filter(pf -> supportsFormat(pf.getMessageFormat())).toList();
 
       if (supportedFormats.size() > 0) {
         return new TransportFormat(supportedFormats.get(0).getMessageFormat());
@@ -68,12 +57,7 @@ public class FormatSelector extends GroundingSelector {
 
   public boolean supportsFormat(String format) {
     List<InvocableStreamPipesEntity> elements = buildInvocables();
-    return elements
-        .stream()
-        .allMatch(e -> e
-            .getSupportedGrounding()
-            .getTransportFormats()
-            .stream()
+    return elements.stream().allMatch(e -> e.getSupportedGrounding().getTransportFormats().stream()
             .anyMatch(s -> rdfTypesAsString(s.getRdfType()).contains(format)));
   }
 

@@ -15,7 +15,6 @@
  * limitations under the License.
  *
  */
-
 package org.apache.streampipes.manager.setup.tasks;
 
 import org.apache.streampipes.commons.exceptions.SpRuntimeException;
@@ -31,19 +30,18 @@ import java.util.List;
 public class CreateAssetLinkTypeTask implements InstallationTask {
 
   private List<AssetLinkType> defaultLinkTypes = Arrays.asList(
-      new AssetLinkType("data-view", "Data View", "var(--color-data-view)", "search", "data-view",
-          List.of("dataexplorer"), true),
-      new AssetLinkType("dashboard", "Dashboard", "var(--color-dashboard)", "insert_chart", "dashboard",
-          List.of("dashboard"), true),
-      new AssetLinkType("adapter", "Adapter", "var(--color-adapter)", "power", "adapter", List.of("connect"), true),
-      new AssetLinkType("data-source", "Data Source", "var(--color-data-source)", "dataset", "data-source", List.of(),
-          false),
-      new AssetLinkType("pipeline", "Pipeline", "var(--color-pipeline)", "play_arrow", "pipeline",
-          List.of("pipeline", "details"), true),
-      new AssetLinkType("measurement", "Data Lake Storage", "var(--color-measurement)", "folder", "measurement",
-          List.of(), false),
-      new AssetLinkType("file", "File", "var(--color-file)", "draft", "file", List.of(), false)
-  );
+          new AssetLinkType("data-view", "Data View", "var(--color-data-view)", "search", "data-view",
+                  List.of("dataexplorer"), true),
+          new AssetLinkType("dashboard", "Dashboard", "var(--color-dashboard)", "insert_chart", "dashboard",
+                  List.of("dashboard"), true),
+          new AssetLinkType("adapter", "Adapter", "var(--color-adapter)", "power", "adapter", List.of("connect"), true),
+          new AssetLinkType("data-source", "Data Source", "var(--color-data-source)", "dataset", "data-source",
+                  List.of(), false),
+          new AssetLinkType("pipeline", "Pipeline", "var(--color-pipeline)", "play_arrow", "pipeline",
+                  List.of("pipeline", "details"), true),
+          new AssetLinkType("measurement", "Data Lake Storage", "var(--color-measurement)", "folder", "measurement",
+                  List.of(), false),
+          new AssetLinkType("file", "File", "var(--color-file)", "draft", "file", List.of(), false));
 
   @Override
   public void execute() {

@@ -15,7 +15,6 @@
  * limitations under the License.
  *
  */
-
 package org.apache.streampipes.client.live;
 
 import org.apache.streampipes.client.api.live.IConfiguredEventProducer;
@@ -37,26 +36,16 @@ public class ProducerManager {
     EventProducer producer = findProducer();
     producer.connect();
 
-    return new ConfiguredEventProducer(
-        producer,
-        findFormatDefinition()
-    );
+    return new ConfiguredEventProducer(producer, findFormatDefinition());
   }
 
   private EventProducer findProducer() {
     var protocol = grounding.getTransportProtocol();
-    return SpProtocolManager
-        .INSTANCE
-        .findDefinition(protocol)
-        .orElseThrow()
-        .getProducer(protocol);
+    return SpProtocolManager.INSTANCE.findDefinition(protocol).orElseThrow().getProducer(protocol);
   }
 
   private SpDataFormatDefinition findFormatDefinition() {
     var format = grounding.getTransportFormats().get(0);
-    return SpDataFormatManager
-        .INSTANCE
-        .findDefinition(format)
-        .orElseThrow();
+    return SpDataFormatManager.INSTANCE.findDefinition(format).orElseThrow();
   }
 }
