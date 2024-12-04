@@ -125,6 +125,8 @@
         <type-parser.version>0.8.1</type-parser.version>
         <hawtbuf.version>1.11</hawtbuf.version>
         <woodstox.version>7.0.0</woodstox.version>
+        <milvus.version>2.4.4</milvus.version>
+        <fasterxml.jackson.version>2.18.1</fasterxml.jackson.version>
 
         <!-- Test dependencies -->
         <junit.version>5.10.1</junit.version>
@@ -508,8 +510,16 @@
                 <artifactId>snakeyaml</artifactId>
                 <version>${snakeyaml.version}</version>
             </dependency>
-
-
+            <dependency>
+                <groupId>io.milvus</groupId>
+                <artifactId>milvus-sdk-java</artifactId>
+                <version>${milvus.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.fasterxml.jackson.datatype</groupId>
+                <artifactId>jackson-datatype-jsr310</artifactId>
+                <version>${fasterxml.jackson.version}</version>
+            </dependency>
             <!-- test dependencies -->
             <dependency>
                 <groupId>org.junit.jupiter</groupId>
