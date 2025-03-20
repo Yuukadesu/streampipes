@@ -23,8 +23,7 @@ import org.apache.streampipes.extensions.api.connect.IEventCollector;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
 
 public class MachineDataSimulator implements Runnable {
@@ -127,6 +126,7 @@ public class MachineDataSimulator implements Runnable {
     event.put("temperature", simulationPhase == 0 ? randomDoubleBetween(40, 50) : randomDoubleBetween(80, 100));
     event.put("density", randomDoubleBetween(40, 50));
     event.put("sensor_fault_flags", simulationPhase != 0);
+    event.put("test", Arrays.asList((float)randomDoubleBetween(0,150),(float)randomDoubleBetween(0,150),(float)randomDoubleBetween(0,150)));
 
     return event;
   }
@@ -137,6 +137,7 @@ public class MachineDataSimulator implements Runnable {
     event.put("timestamp", System.currentTimeMillis());
     event.put("sensorId", "pressure01");
     event.put("pressure", simulationPhase == 0 ? randomDoubleBetween(10, 40) : randomDoubleBetween(40, 70));
+    event.put("test", Arrays.asList((float)randomDoubleBetween(0,150),(float)randomDoubleBetween(0,150),(float)randomDoubleBetween(0,150)));
 
     return event;
   }
@@ -148,6 +149,7 @@ public class MachineDataSimulator implements Runnable {
     event.put("sensorId", "level01");
     event.put("level", simulationPhase == 0 ? randomDoubleBetween(20, 30) : randomDoubleBetween(60, 80));
     event.put("overflow", simulationPhase != 0);
+    event.put("test", Arrays.asList((float)randomDoubleBetween(0,150),(float)randomDoubleBetween(0,150),(float)randomDoubleBetween(0,150)));
 
     return event;
   }

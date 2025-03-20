@@ -26,6 +26,7 @@ import org.apache.streampipes.sdk.utils.Datatypes;
 import org.apache.streampipes.vocabulary.SO;
 
 import java.net.URI;
+import java.util.Collections;
 
 import static org.apache.streampipes.sdk.helpers.EpProperties.timestampProperty;
 
@@ -81,6 +82,15 @@ public class MachineDataSimulatorUtils {
             .scope(PropertyScope.MEASUREMENT_PROPERTY)
             .build())
         .sample("overflow", true)
+            .sample("test", true)
+            .property(PrimitivePropertyBuilder
+                    .create(Datatypes.Sequence, "test")
+                    .label("Sensor Fault Flags")
+                    .description("Any fault flags of the sensors")
+                    .domainProperty(SO.FEATURE_LIST)
+                    .scope(PropertyScope.MEASUREMENT_PROPERTY)
+                    .build())
+            .sample("test", Collections.EMPTY_LIST)
         .build();
   }
 
@@ -105,6 +115,15 @@ public class MachineDataSimulatorUtils {
             .scope(PropertyScope.MEASUREMENT_PROPERTY)
             .build())
         .sample("pressure", 85.22f)
+            .sample("test", true)
+            .property(PrimitivePropertyBuilder
+                    .create(Datatypes.Sequence, "test")
+                    .label("Sensor Fault Flags")
+                    .description("Any fault flags of the sensors")
+                    .domainProperty(SO.FEATURE_LIST)
+                    .scope(PropertyScope.MEASUREMENT_PROPERTY)
+                    .build())
+            .sample("test", Collections.EMPTY_LIST)
         .build();
   }
 
@@ -161,7 +180,15 @@ public class MachineDataSimulatorUtils {
             .domainProperty(SO.BOOLEAN)
             .scope(PropertyScope.MEASUREMENT_PROPERTY)
             .build())
-        .sample("sensor_fault_flags", true)
+        .sample("test", true)
+            .property(PrimitivePropertyBuilder
+                    .create(Datatypes.Sequence, "test")
+                    .label("Sensor Fault Flags")
+                    .description("Any fault flags of the sensors")
+                    .domainProperty(SO.BOOLEAN)
+                    .scope(PropertyScope.MEASUREMENT_PROPERTY)
+                    .build())
+            .sample("test", Collections.EMPTY_LIST)
         .build();
   }
 }
