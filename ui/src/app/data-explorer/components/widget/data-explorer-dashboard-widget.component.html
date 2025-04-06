@@ -65,7 +65,7 @@
                     [matMenuTriggerFor]="menu"
                     aria-label="More options"
                     matTooltip="More options"
-                    *ngIf="!editMode && !dataViewMode"
+                    *ngIf="!dataViewMode"
                     [attr.data-cy]="
                         'more-options-' +
                         configuredWidget.baseAppearanceConfig.widgetTitle.replaceAll(
@@ -99,25 +99,13 @@
                 </mat-menu>
                 <button
                     mat-icon-button
-                    *ngIf="editMode"
-                    (click)="downloadDataAsFile()"
-                    [attr.data-cy]="
-                        'download-' +
-                        configuredWidget.baseAppearanceConfig.widgetTitle.replaceAll(
-                            ' ',
-                            ''
-                        )
-                    "
-                >
-                    <mat-icon>get_app</mat-icon>
-                </button>
-                <button
-                    mat-icon-button
                     [matMenuTriggerFor]="optMenu"
                     *ngIf="!globalTimeEnabled"
                     aria-label="Options"
                     data-cy="options-data-explorer"
                     #menuTrigger="matMenuTrigger"
+                    [matTooltip]="tooltipText"
+                    matTooltipClass="no-wrap-tooltip"
                 >
                     <mat-icon
                         [color]="timeSettingsModified ? 'primary' : 'default'"
@@ -126,7 +114,13 @@
                 </button>
                 <mat-menu #optMenu="matMenu" class="large-menu">
                     <sp-time-selector-menu
+                        #timeSelectorMenu
+                        *ngIf="quickSelections"
                         [timeSettings]="clonedTimeSettings"
+                        [quickSelections]="quickSelections"
+                        [enableTimePicker]="enableTimePicker"
+                        [maxDayRange]="maxDayRange"
+                        [labels]="labels"
                         (timeSettingsEmitter)="modifyWidgetTimeSettings($event)"
                         class="w-100"
                     >

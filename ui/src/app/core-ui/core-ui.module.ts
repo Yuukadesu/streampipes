@@ -26,6 +26,7 @@ import { MatNativeDateModule } from '@angular/material/core';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
+import { ClipboardModule } from '@angular/cdk/clipboard';
 
 import { MatChipsModule } from '@angular/material/chips';
 import { MatSliderModule } from '@angular/material/slider';
@@ -116,6 +117,10 @@ import { SingleMarkerMapComponent } from './single-marker-map/single-marker-map.
 import { LeafletModule } from '@asymmetrik/ngx-leaflet';
 import { StaticTreeInputTextEditorComponent } from './static-properties/static-runtime-resolvable-tree-input/static-tree-input-text-editor/static-tree-input-text-editor.component';
 import { PipelineElementTemplateConfigItemComponent } from './pipeline-element-template-config/pipeline-element-template-config-item/pipeline-element-template-config-item.component';
+import { ConfigurationCodePanelComponent } from './configuration-code-panel/configuration-code-panel.component';
+import { JsonPrettyPrintPipe } from './pipes/json-pretty-print.pipe';
+import { YamlPrettyPrintPipe } from './pipes/yaml-pretty-print.pipe';
+import { TopicsComponent } from './topics/topics.component';
 
 @NgModule({
     imports: [
@@ -148,6 +153,7 @@ import { PipelineElementTemplateConfigItemComponent } from './pipeline-element-t
         ReactiveFormsModule,
         FormsModule,
         CdkTableModule,
+        ClipboardModule,
         MatAutocompleteModule,
         MatSnackBarModule,
         MatProgressSpinnerModule,
@@ -168,6 +174,7 @@ import { PipelineElementTemplateConfigItemComponent } from './pipeline-element-t
         LeafletModule,
     ],
     declarations: [
+        ConfigurationCodePanelComponent,
         DataDownloadDialogComponent,
         DateInputComponent,
         DisplayRecommendedPipe,
@@ -178,6 +185,7 @@ import { PipelineElementTemplateConfigItemComponent } from './pipeline-element-t
         PipelineElementRuntimeInfoComponent,
         PipelineElementDocumentationComponent,
         HelpComponent,
+        TopicsComponent,
         StaticAnyInputComponent,
         StaticPropertyComponent,
         StaticFreeInputComponent,
@@ -220,15 +228,19 @@ import { PipelineElementTemplateConfigItemComponent } from './pipeline-element-t
         StatusIndicatorComponent,
         MultiStepStatusIndicatorComponent,
         PipelineOperationStatusComponent,
+        JsonPrettyPrintPipe,
+        YamlPrettyPrintPipe,
     ],
     providers: [MatDatepickerModule, DisplayRecommendedPipe],
     exports: [
+        ConfigurationCodePanelComponent,
         DataDownloadDialogComponent,
         DateInputComponent,
         PipelineElementTemplateConfigComponent,
         PipelineElementRuntimeInfoComponent,
         PipelineElementDocumentationComponent,
         HelpComponent,
+        TopicsComponent,
         StaticAnyInputComponent,
         StaticPropertyComponent,
         StaticFreeInputComponent,
@@ -255,6 +267,8 @@ import { PipelineElementTemplateConfigItemComponent } from './pipeline-element-t
         MultiStepStatusIndicatorComponent,
         PipelineOperationStatusComponent,
         SingleMarkerMapComponent,
+        JsonPrettyPrintPipe,
+        YamlPrettyPrintPipe,
     ],
 })
 export class CoreUiModule {}

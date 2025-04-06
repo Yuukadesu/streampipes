@@ -22,13 +22,13 @@ import { DataExplorerDashboardGridComponent } from '../widget-view/grid-view/dat
 import {
     ClientDashboardItem,
     Dashboard,
+    DashboardLiveSettings,
     DataExplorerWidgetModel,
     DataLakeMeasure,
     DataViewDataExplorerService,
-    TimeSelectionId,
+    TimeSelectionConstants,
     TimeSettings,
 } from '@streampipes/platform-services';
-import { TimeSelectionService } from '../../services/time-selection.service';
 import { AuthService } from '../../../services/auth.service';
 import { UserPrivilege } from '../../../_enums/user-privilege.enum';
 import {
@@ -48,6 +48,7 @@ import { SpDataExplorerRoutes } from '../../data-explorer.routes';
 import { DataExplorerRoutingService } from '../../services/data-explorer-routing.service';
 import { DataExplorerDetectChangesService } from '../../services/data-explorer-detect-changes.service';
 import { SupportsUnsavedChangeDialog } from '../../models/dataview-dashboard.model';
+import { TimeSelectionService } from '@streampipes/shared-ui';
 
 @Component({
     selector: 'sp-data-explorer-dashboard-panel',
@@ -224,6 +225,7 @@ export class DataExplorerDashboardPanelComponent
                     this.timeSelectionService.getDefaultTimeSettings();
             } else {
                 this.timeSelectionService.updateTimeSettings(
+                    this.timeSelectionService.defaultQuickTimeSelections,
                     this.dashboard.dashboardTimeSettings,
                     new Date(),
                 );
@@ -233,7 +235,7 @@ export class DataExplorerDashboardPanelComponent
                     ? this.overrideTime(+startTime, +endTime)
                     : this.dashboard.dashboardTimeSettings;
             this.dashboardLoaded = true;
-            this.modifyRefreshInterval();
+            this.modifyRefreshInterval(this.dashboard.dashboardLiveSettings);
         });
     }
 
@@ -242,7 +244,7 @@ export class DataExplorerDashboardPanelComponent
             startTime,
             endTime,
             dynamicSelection: -1,
-            timeSelectionId: TimeSelectionId.CUSTOM,
+            timeSelectionId: TimeSelectionConstants.CUSTOM,
         };
     }
 
@@ -285,7 +287,8 @@ export class DataExplorerDashboardPanelComponent
         }
     }
 
-    modifyRefreshInterval(): void {
+    modifyRefreshInterval(liveSettings: DashboardLiveSettings): void {
+        this.dashboard.dashboardLiveSettings = liveSettings;
         this.refreshSubscription?.unsubscribe();
         if (this.dashboard.dashboardLiveSettings.refreshModeActive) {
             this.createQuerySubscription();
@@ -301,6 +304,7 @@ export class DataExplorerDashboardPanelComponent
             .pipe(
                 switchMap(() => {
                     this.timeSelectionService.updateTimeSettings(
+                        this.timeSelectionService.defaultQuickTimeSelections,
                         this.timeSettings,
                         new Date(),
                     );

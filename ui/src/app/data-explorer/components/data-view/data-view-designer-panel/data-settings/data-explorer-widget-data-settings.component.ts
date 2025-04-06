@@ -34,9 +34,14 @@ import {
 } from '@streampipes/platform-services';
 import { Tuple2 } from '../../../../../core-model/base/Tuple2';
 import { zip } from 'rxjs';
+import { Router } from '@angular/router';
 import { WidgetConfigurationService } from '../../../../services/widget-configuration.service';
 import { FieldSelectionPanelComponent } from './field-selection-panel/field-selection-panel.component';
 import { GroupSelectionPanelComponent } from './group-selection-panel/group-selection-panel.component';
+import { TableVisConfig } from '../../../widgets/table/model/table-widget.model';
+import { DataExplorerFieldProviderService } from 'src/app/data-explorer/services/data-explorer-field-provider-service';
+import { FieldProvider } from 'src/app/data-explorer/models/dataview-dashboard.model';
+import { WidgetTypeService } from 'src/app/data-explorer/services/widget-type.service';
 
 @Component({
     selector: 'sp-data-explorer-widget-data-settings',
@@ -48,6 +53,7 @@ export class DataExplorerWidgetDataSettingsComponent implements OnInit {
     @Input() dataLakeMeasure: DataLakeMeasure;
     @Input() newWidgetMode: boolean;
     @Input() widgetId: string;
+    @Input() currentlyConfiguredWidget: DataExplorerWidgetModel;
 
     @Output() createWidgetEmitter: EventEmitter<
         Tuple2<DataLakeMeasure, DataExplorerWidgetModel>
@@ -68,10 +74,16 @@ export class DataExplorerWidgetDataSettingsComponent implements OnInit {
 
     step = 0;
 
+    expandFieldsDataSource = true;
+    expandFieldsQuery = true;
+
     constructor(
         private dataExplorerService: DataViewDataExplorerService,
         private datalakeRestService: DatalakeRestService,
         private widgetConfigService: WidgetConfigurationService,
+        private fieldProviderService: DataExplorerFieldProviderService,
+        private widgetTypeService: WidgetTypeService,
+        private router: Router,
     ) {}
 
     ngOnInit(): void {
@@ -83,8 +95,19 @@ export class DataExplorerWidgetDataSettingsComponent implements OnInit {
             this.dataExplorerService.getAllPersistedDataStreams(),
             this.datalakeRestService.getAllMeasurementSeries(),
         ).subscribe(response => {
-            this.availablePipelines = response[0];
+            this.availablePipelines = response[0].filter(
+                p =>
+                    response[1].find(m => m.measureName === p.measureName) !==
+                    undefined,
+            );
             this.availableMeasurements = response[1];
+
+            this.availablePipelines.sort((a, b) =>
+                a.pipelineName.localeCompare(b.pipelineName),
+            );
+            this.availableMeasurements.sort((a, b) =>
+                a.measureName.localeCompare(b.measureName),
+            );
 
             // replace pipeline event schemas. Reason: Available measures do not contain field for timestamp
             this.availablePipelines.forEach(p => {
@@ -212,6 +235,39 @@ export class DataExplorerWidgetDataSettingsComponent implements OnInit {
         };
     }
 
+    makeVisualizationConfig(fields: FieldProvider): TableVisConfig {
+        return {
+            configurationValid: true,
+            searchValue: '',
+            selectedColumns: fields.allFields,
+        };
+    }
+
+    createDefaultWidget(): void {
+        if (this.checkIfDefaultTableShouldBeShown()) {
+            const fields = this.fieldProviderService.generateFieldLists(
+                this.dataConfig.sourceConfigs,
+            );
+            this.currentlyConfiguredWidget.visualizationConfig =
+                this.makeVisualizationConfig(fields);
+            this.currentlyConfiguredWidget.widgetType = 'table';
+            this.widgetTypeService.notify({
+                widgetId: this.currentlyConfiguredWidget.elementId,
+                newWidgetTypeId: this.currentlyConfiguredWidget.widgetType,
+            });
+        }
+    }
+
+    /**
+     * This method checks if there is at least one data source and that no widget type is already configured.
+     */
+    checkIfDefaultTableShouldBeShown(): boolean {
+        return (
+            this.dataConfig.sourceConfigs.length === 1 &&
+            !this.currentlyConfiguredWidget.widgetType
+        );
+    }
+
     removeSourceConfig(index: number) {
         this.dataConfig.sourceConfigs.splice(index, 1);
     }
@@ -228,6 +284,22 @@ export class DataExplorerWidgetDataSettingsComponent implements OnInit {
             refreshData: true,
             refreshView: true,
         });
+    }
+
+    toggleExpandFieldsDataSource() {
+        this.expandFieldsDataSource = !this.expandFieldsDataSource;
+    }
+
+    toggleExpandFieldsQuery() {
+        this.expandFieldsQuery = !this.expandFieldsQuery;
+    }
+
+    navigateToConnect(): void {
+        this.router.navigate(['connect']);
+    }
+
+    navigateToPipelines(): void {
+        this.router.navigate(['pipelines']);
     }
 
     deepCopy(obj) {

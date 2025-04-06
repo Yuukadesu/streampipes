@@ -25,17 +25,18 @@ import org.apache.streampipes.connect.management.compact.PersistPipelineHandler;
 import org.apache.streampipes.connect.management.management.AdapterMasterManagement;
 import org.apache.streampipes.connect.management.management.AdapterUpdateManagement;
 import org.apache.streampipes.connect.management.management.CompactAdapterManagement;
-import org.apache.streampipes.manager.template.PipelineTemplateManagement;
+import org.apache.streampipes.manager.pipeline.compact.CompactPipelineManagement;
 import org.apache.streampipes.model.connect.adapter.AdapterDescription;
 import org.apache.streampipes.model.connect.adapter.compact.CompactAdapter;
 import org.apache.streampipes.model.message.Notifications;
 import org.apache.streampipes.resource.management.SpResourceManager;
-import org.apache.streampipes.rest.security.AuthConstants;
+import org.apache.streampipes.rest.shared.constants.SpMediaType;
 import org.apache.streampipes.rest.shared.exception.BadRequestException;
 import org.apache.streampipes.storage.management.StorageDispatcher;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -57,7 +58,7 @@ public class CompactAdapterResource extends AbstractAdapterResource<AdapterMaste
   public CompactAdapterResource() {
     super(() -> new AdapterMasterManagement(
         StorageDispatcher.INSTANCE.getNoSqlStore()
-            .getAdapterInstanceStorage(),
+                                  .getAdapterInstanceStorage(),
         new SpResourceManager().manageAdapters(),
         new SpResourceManager().manageDataStreams(),
         AdapterMetricsManager.INSTANCE.getAdapterMetrics()
@@ -69,11 +70,11 @@ public class CompactAdapterResource extends AbstractAdapterResource<AdapterMaste
   @PostMapping(
       consumes = {
           MediaType.APPLICATION_JSON_VALUE,
-          "application/yaml",
-          "application/yml"
+          SpMediaType.YML,
+          SpMediaType.YAML
       }
   )
-  @PreAuthorize(AuthConstants.HAS_WRITE_ADAPTER_PRIVILEGE)
+  @PreAuthorize("this.hasWriteAuthority()")
   public ResponseEntity<?> addAdapterCompact(
       @RequestBody CompactAdapter compactAdapter
   ) throws Exception {
@@ -81,18 +82,34 @@ public class CompactAdapterResource extends AbstractAdapterResource<AdapterMaste
     var adapterDescription = getGeneratedAdapterDescription(compactAdapter);
     var principalSid = getAuthenticatedUserSid();
 
+    var adapterId = adapterDescription.getElementId();
+
     try {
-      var adapterId = adapterDescription.getElementId();
       managementService.addAdapter(adapterDescription, adapterId, principalSid);
+    } catch (AdapterException e) {
+      LOG.error(
+          "Error while storing the adapterDescription with appId {}. An adapter with the given id already exists.",
+          adapterDescription.getAppId(), e
+      );
+      return ResponseEntity.status(HttpStatus.CONFLICT)
+                           .body(Notifications.error(e.getMessage()));
+    }
+
+    try {
       if (compactAdapter.createOptions() != null) {
-        if (compactAdapter.createOptions().persist()) {
+        if (compactAdapter.createOptions()
+                          .persist()) {
           var storedAdapter = managementService.getAdapter(adapterId);
           var status = new PersistPipelineHandler(
-              new PipelineTemplateManagement(),
+              getNoSqlStorage().getPipelineTemplateStorage(),
+              new CompactPipelineManagement(
+                  getNoSqlStorage().getPipelineElementDescriptionStorage()
+              ),
               getAuthenticatedUserSid()
           ).createAndStartPersistPipeline(storedAdapter);
         }
-        if (compactAdapter.createOptions().start()) {
+        if (compactAdapter.createOptions()
+                          .start()) {
           managementService.startStreamAdapter(adapterId);
         }
       }
@@ -111,7 +128,7 @@ public class CompactAdapterResource extends AbstractAdapterResource<AdapterMaste
           "application/yml"
       }
   )
-  @PreAuthorize(AuthConstants.HAS_WRITE_ADAPTER_PRIVILEGE)
+  @PreAuthorize("this.hasWriteAuthority() and hasPermission('#elementId', 'WRITE')")
   public ResponseEntity<?> updateAdapterCompact(
       @PathVariable("id") String elementId,
       @RequestBody CompactAdapter compactAdapter
@@ -139,9 +156,12 @@ public class CompactAdapterResource extends AbstractAdapterResource<AdapterMaste
     return new CompactAdapterManagement(generators).convertToAdapterDescription(compactAdapter);
   }
 
-  private AdapterDescription getGeneratedAdapterDescription(CompactAdapter compactAdapter,
-                                                            AdapterDescription existingAdapter) throws Exception {
+  private AdapterDescription getGeneratedAdapterDescription(
+      CompactAdapter compactAdapter,
+      AdapterDescription existingAdapter
+  ) throws Exception {
     var generators = adapterGenerationSteps.getGenerators();
     return new CompactAdapterManagement(generators).convertToAdapterDescription(compactAdapter, existingAdapter);
   }
+
 }
