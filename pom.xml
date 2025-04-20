@@ -143,7 +143,6 @@
         <maven-shade-plugin.version>3.6.0</maven-shade-plugin.version>
         <maven.version>3.8.7</maven.version>
         <typescript-generator-maven-plugin.version>3.2.1263</typescript-generator-maven-plugin.version>
-        <spotless.skip>true</spotless.skip>
         <spotless.version>2.43.0</spotless.version>
 
 
@@ -1126,21 +1125,14 @@
             <plugin>
                 <groupId>com.diffplug.spotless</groupId>
                 <artifactId>spotless-maven-plugin</artifactId>
-                <configuration>
-                    <skip>${spotless.skip}</skip>
-                </configuration>
-            </plugin>
-            <plugin>
-                <groupId>com.diffplug.spotless</groupId>
-                <artifactId>spotless-maven-plugin</artifactId>
                 <version>${spotless.version}</version>
                 <configuration>
                     <java>
                         <importOrder>
-                            <order>org.apache.streampipes,*,jakarta,javax,java,scala</order>
+                            <order>org.apache.streampipes,,jakarta,javax,java,scala,\#</order>
                         </importOrder>
                         <eclipse>
-                            <file>tools/maven/eclipse-code-formatter.xml</file>
+                            <file>tools/maven/streampipes-code-formatter.xml</file>
                         </eclipse>
                         <licenseHeader>
                             <file>tools/maven/checkstyle-header.txt</file>
@@ -1328,8 +1320,8 @@
         <developerConnection>scm:git:ssh://git@github.com/apache/streampipes.git</developerConnection>
         <connection>scm:git:ssh://git@github.com/apache/streampipes.git</connection>
         <url>https://github.com/apache/streampipes</url>
-      <tag>release/0.97.0</tag>
-  </scm>
+        <tag>release/0.97.0</tag>
+    </scm>
 
     <issueManagement>
         <system>GitHub</system>
